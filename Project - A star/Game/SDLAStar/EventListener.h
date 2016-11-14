@@ -11,7 +11,8 @@ public:
 	//add your own events here
 	enum Event {
 		SPACE	,
-		QUIT
+		QUIT	,
+		ANYKEY
 	};
 
 

@@ -164,12 +164,16 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="EventListener.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="LTimer.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LevelLoader.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SDLAStar.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="InputManager.cpp" />

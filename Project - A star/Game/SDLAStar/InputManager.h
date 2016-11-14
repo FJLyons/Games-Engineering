@@ -29,6 +29,6 @@ public:
 	void AddListener(EventListener::Event, EventListener*);
 	void Dispatch(EventListener::Event);
 
-	void ProcessInput();
+	void ProcessInput(bool endGameScreen);
 };
 

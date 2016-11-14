@@ -37,7 +37,7 @@ void InputManager::Dispatch(EventListener::Event evt)
 
 
 //Gnereate events
-void InputManager::ProcessInput()
+void InputManager::ProcessInput(bool endGameScreen)
 {
 	SDL_Event e;
 	while (SDL_PollEvent(&e) != 0)
@@ -46,8 +46,22 @@ void InputManager::ProcessInput()
 		{
 			/* Keyboard event */
 			case SDL_KEYDOWN:
+
+				if (endGameScreen == true && e.key.keysym.sym == SDLK_q)
+				{
+					Dispatch(EventListener::Event::QUIT);
+				}
+				else
+				{
+					Dispatch(EventListener::Event::ANYKEY);
+				}
+
 				switch (e.key.keysym.sym) 
 				{
+					case SDLK_ESCAPE:
+						Dispatch(EventListener::Event::QUIT);
+						break;
+
 					case SDLK_SPACE:
 						Dispatch(EventListener::Event::SPACE);
 						break;

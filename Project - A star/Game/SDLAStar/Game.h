@@ -7,6 +7,7 @@
 #include "InputManager.h"
 #include "EventListener.h"
 
+
 /** The game objct whic manages the game loop*/
 class Game:public EventListener
 {
@@ -15,16 +16,18 @@ class Game:public EventListener
 
 	std::vector<GameObject*> gameObjects;
 
-	unsigned int lastTime;//time of last update;
+	unsigned int lastTime; //time of last update;
 
 	bool pause;
 	bool quit;
+
+	bool progress;
 
 public:
 	Game();
 	~Game();
 
-	bool init();
+	bool init(int levelNumber);
 	void destroy();
 
 	void update();
@@ -32,5 +35,10 @@ public:
 	void loop();
 
 	void onEvent(EventListener::Event);
+
+	bool initMenu(bool endGameScreen);
+	void updateMenu();
+	void renderMenu();
+	void loopMenu(bool endGameScreen);
 };
 
