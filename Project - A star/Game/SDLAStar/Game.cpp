@@ -8,6 +8,7 @@ using namespace std;
 #include "LTimer.h"
 #include "Game.h"
 #include "SceneManager.h"
+#include "LevelLoader.h"
 
 
 const int SCREEN_FPS = 100;
@@ -27,13 +28,21 @@ Game::~Game()
 
 
 bool Game::init(int levelNumber) {	
-	Size2D winSize(1920,1080);
+	Size2D winSize(2000,2000);
 
 	//creates our renderer, which looks after drawing and the window
 	renderer.init(winSize, "A Star Threading");
 
+	//set up the viewport
+	Size2D vpSize(2000, 2000);
+	Point2D vpBottomLeft(0, 0);
+
+	Rect vpRect(vpBottomLeft, vpSize);
+	renderer.setViewPort(vpRect);
+
 	// Objects
-	
+	tiles = LevelLoader::instance()->LoadLevel(levelNumber);
+
 	// Time
 	lastTime = LTimer::gameTime();
 	
@@ -52,11 +61,11 @@ bool Game::init(int levelNumber) {
 void Game::destroy()
 {
 	//empty out the game object vector before quitting
-	for (std::vector<GameObject*>::iterator i = gameObjects.begin(); i != gameObjects.end(); i++) 
+	for (std::vector<Tile*>::iterator i = tiles.begin(); i != tiles.end(); i++)
 	{
 		delete *i;
 	}
-	gameObjects.clear();
+	tiles.clear();
 	renderer.destroy();
 }
 
@@ -67,7 +76,7 @@ void Game::update()
 	float deltaTime = (currentTime - lastTime) / 1000.0;//time since last update
 
 	//call update on all game objects
-	for (std::vector<GameObject*>::iterator i = gameObjects.begin(); i != gameObjects.end(); i++) 
+	for (std::vector<Tile*>::iterator i = tiles.begin(); i != tiles.end(); i++)
 	{
 		(*i)->Update(deltaTime);
 	}
@@ -83,7 +92,7 @@ void Game::render()
 	renderer.clear(Colour(0,0,0));// prepare for new frame
 	
 	//render every object
-	for (std::vector<GameObject*>::iterator i = gameObjects.begin(), e= gameObjects.end(); i != e; i++) 
+	for (std::vector<Tile*>::iterator i = tiles.begin(), e= tiles.end(); i != e; i++)
 	{
 		(*i)->Render(renderer);
 	}

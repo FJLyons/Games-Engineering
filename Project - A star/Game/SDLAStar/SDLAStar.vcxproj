@@ -166,7 +166,6 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="LTimer.h" />
-    <ClInclude Include="Map.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="stdafx.h" />
@@ -175,7 +174,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LevelLoader.cpp" />
-    <ClCompile Include="Map.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SDLAStar.cpp" />
     <ClCompile Include="Game.cpp" />

@@ -9,6 +9,8 @@
 #include "GameObject.h"
 #include <vector>
 
+#include "Tile.h"
+
 class LevelLoader
 {
 public:
@@ -17,9 +19,10 @@ public:
 
 	static LevelLoader* instance();
 
-	std::vector<GameObject*> LoadLevel(int levelNumber);
+	std::vector<Tile*> LoadLevel(int levelNumber);
 
 private:
 	static LevelLoader* _instance;
+	std::vector<std::vector<Tile*>> tileOne;
 };
 

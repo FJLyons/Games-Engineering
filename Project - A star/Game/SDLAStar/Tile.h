@@ -5,8 +5,6 @@
 
 class Tile : public GameObject
 {
-	Tile();
-	~Tile();
 
 public:
 	//type to determine the type of block
@@ -24,13 +22,17 @@ public:
 	~Tile();
 
 	void Render(Renderer & r);
-	void Update(unsigned int deltaTime);
+	void Update(float deltaTime) override;
 
 	Rect getRectangle();
 	Colour getColour();
 	Type getType();
 
 	void setColour(int, int, int, int);
+
+	void setSpawn();
+	void setGoal();
+	void setWall();
 
 protected:
 	Rect _rect;
