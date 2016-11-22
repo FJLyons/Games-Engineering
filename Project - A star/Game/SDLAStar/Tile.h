@@ -18,7 +18,8 @@ public:
 		OCCUPIED,
 	};
 
-	Tile(Rect r, Type t);
+	Tile(Rect r, Type t, int x, int y, int w);
+	Tile(int x, int y);
 	~Tile();
 
 	void Render(Renderer & r);
@@ -33,9 +34,49 @@ public:
 	void setSpawn();
 	void setGoal();
 	void setWall();
+	void setPath();
+
+	// Node Functionality
+	inline Tile& operator=(const Tile& target)
+	{
+		if (*this != target)
+		{
+			xPos = target.xPos;
+			yPos = target.yPos;
+			travelCost = target.travelCost;
+		}
+
+		return *this;
+	}
+
+	inline bool operator==(const Tile& target) const
+	{
+		return F == target.F && F == target.F;
+	}
+
+	inline bool operator!=(const Tile& target) const
+	{
+		return !(*this == target);
+	}
+
+	inline bool operator<(const Tile& target) const
+	{
+		return target.F < F;
+	}
+
+	int xPos, yPos;
+	
+	float travelCost;
 
 protected:
 	Rect _rect;
 	Colour _col;
 	Type _type;
+
+public:
+	int F;
+	int G = 0;
+	int H;
+
+	Tile* parentTile;
 };

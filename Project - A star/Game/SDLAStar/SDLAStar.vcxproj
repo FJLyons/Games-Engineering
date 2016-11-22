@@ -166,6 +166,7 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="LTimer.h" />
+    <ClInclude Include="Pathfinder.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="stdafx.h" />

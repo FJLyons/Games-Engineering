@@ -25,10 +25,8 @@ LevelLoader* LevelLoader::instance()
 	return _instance;
 }
 
-std::vector<Tile*> LevelLoader::LoadLevel(int levelNumber)
+std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 {
-	std::vector<Tile*> tiles;
-
 	if (levelNumber == 1)
 	{
 		int size = 30;
@@ -46,7 +44,8 @@ std::vector<Tile*> LevelLoader::LoadLevel(int levelNumber)
 				float xPos = x + (x * width);
 				float yPos = y + (y * height);
 
-				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR);
+
+				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR, x, y, 10);
 
 
 				// Create Spawn
@@ -61,10 +60,10 @@ std::vector<Tile*> LevelLoader::LoadLevel(int levelNumber)
 				if (x == 20 && y >= 2 && y <= 27) { temp->setWall(); }
 
 				tileOne[x].push_back(temp);
-
-				tiles.push_back(temp);
 			}
 		}
+
+		return tileOne;
 	}
 
 	else if (levelNumber == 2)
@@ -77,25 +76,25 @@ std::vector<Tile*> LevelLoader::LoadLevel(int levelNumber)
 
 		for (int x = 0; x < size; x++)
 		{
-			tileOne.push_back(std::vector<Tile*>());
+			tileTwo.push_back(std::vector<Tile*>());
 
 			for (int y = 0; y < size; y++)
 			{
 				float xPos = 0 + (x * width);
 				float yPos = 0 + (y * height);
 
-				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR);
+				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR, x, y, 10);
 
 				if (y == 90)
 				{
 					temp->setWall();
 				}
 
-				tileOne[x].push_back(temp);
-
-				tiles.push_back(temp);
+				tileTwo[x].push_back(temp);
 			}
 		}
+
+		return tileTwo;
 	}
 
 	else if (levelNumber == 3)
@@ -108,26 +107,24 @@ std::vector<Tile*> LevelLoader::LoadLevel(int levelNumber)
 
 		for (int x = 0; x < size; x++)
 		{
-			tileOne.push_back(std::vector<Tile*>());
+			tileTree.push_back(std::vector<Tile*>());
 
 			for (int y = 0; y < size; y++)
 			{
 				float xPos = 0 + (x * width);
 				float yPos = 0 + (y * height);
 
-				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR);
+				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR, x, y, 10);
 
 				if (y == 990)
 				{
 					temp->setWall();
 				}
 
-				tileOne[x].push_back(temp);
-
-				tiles.push_back(temp);
+				tileTree[x].push_back(temp);
 			}
 		}
-	}
 
-	return tiles;
+		return tileTree;
+	}
 }

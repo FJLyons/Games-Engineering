@@ -43,6 +43,11 @@ bool Game::init(int levelNumber) {
 	// Objects
 	tiles = LevelLoader::instance()->LoadLevel(levelNumber);
 
+	startTile = tiles[0][14];
+	endTile = tiles[29][14];
+
+	pathfinder->Find(startTile, endTile,  tiles);
+
 	// Time
 	lastTime = LTimer::gameTime();
 	
@@ -61,10 +66,14 @@ bool Game::init(int levelNumber) {
 void Game::destroy()
 {
 	//empty out the game object vector before quitting
-	for (std::vector<Tile*>::iterator i = tiles.begin(); i != tiles.end(); i++)
+	for (int i = 0; i < tiles.size(); i++)
 	{
-		delete *i;
+		for (int j = 0; j < tiles.size(); j++)
+		{
+			delete tiles.at(i).at(j);
+		}
 	}
+
 	tiles.clear();
 	renderer.destroy();
 }
@@ -76,9 +85,12 @@ void Game::update()
 	float deltaTime = (currentTime - lastTime) / 1000.0;//time since last update
 
 	//call update on all game objects
-	for (std::vector<Tile*>::iterator i = tiles.begin(); i != tiles.end(); i++)
+	for (int i = 0; i < tiles.size(); i++)
 	{
-		(*i)->Update(deltaTime);
+		for (int j = 0; j < tiles.size(); j++)
+		{
+			tiles.at(i).at(j)->Update(deltaTime);
+		}
 	}
 
 	//save the curent time for next frame
@@ -92,9 +104,12 @@ void Game::render()
 	renderer.clear(Colour(0,0,0));// prepare for new frame
 	
 	//render every object
-	for (std::vector<Tile*>::iterator i = tiles.begin(), e= tiles.end(); i != e; i++)
+	for (int i = 0; i < tiles.size(); i++)
 	{
-		(*i)->Render(renderer);
+		for (int j = 0; j < tiles.size(); j++)
+		{
+			tiles.at(i).at(j)->Render(renderer);
+		}
 	}
 
 	renderer.present();// display the new frame (swap buffers)

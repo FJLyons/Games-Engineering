@@ -2,9 +2,12 @@
 #include "Tile.h"
 
 
-Tile::Tile(Rect r, Type t)
+Tile::Tile(Rect r, Type t, int x, int y, int w)
 	: _rect(r)
 	, _type(t)
+	, xPos(x)
+	, yPos(y)
+	, travelCost(w)
 {
 	switch (_type)
 	{//set the colour based on its type
@@ -16,6 +19,7 @@ Tile::Tile(Rect r, Type t)
 		break;
 	case Type::PATH:
 		_col = Colour(125, 125, 255, 125);
+		break;
 	case Type::FLOOR:
 		_col = Colour(255, 255, 255, 255);
 		break;
@@ -30,6 +34,13 @@ Tile::Tile(Rect r, Type t)
 	}
 }
 
+Tile::Tile(int x, int y)
+	: xPos(x)
+	, yPos(y)
+{
+	_type = Type::PATH;
+	_col = Colour(125, 125, 255, 125);
+}
 
 Tile::~Tile()
 {
@@ -80,4 +91,10 @@ void Tile::setWall()
 {
 	_type = Tile::Type::WALL;
 	_col = Colour(0, 0, 0, 255);
+}
+
+void Tile::setPath()
+{
+	_type = Tile::Type::PATH;
+	_col = Colour(125, 125, 255, 125);
 }

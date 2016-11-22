@@ -8,6 +8,8 @@
 #include "EventListener.h"
 #include "Tile.h"
 
+#include "Pathfinder.h"
+
 
 /** The game objct whic manages the game loop*/
 class Game:public EventListener
@@ -17,7 +19,12 @@ class Game:public EventListener
 
 	std::vector<GameObject*> gameObjects;
 
-	std::vector<Tile*> tiles;
+	std::vector<std::vector<Tile*>> tiles;
+
+	Tile* startTile;
+	Tile* endTile;
+
+	Pathfinder* pathfinder;
 
 	unsigned int lastTime; //time of last update;
 

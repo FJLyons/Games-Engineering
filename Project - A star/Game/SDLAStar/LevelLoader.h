@@ -19,10 +19,12 @@ public:
 
 	static LevelLoader* instance();
 
-	std::vector<Tile*> LoadLevel(int levelNumber);
+	std::vector<std::vector<Tile*>> LoadLevel(int levelNumber);
 
 private:
 	static LevelLoader* _instance;
 	std::vector<std::vector<Tile*>> tileOne;
+	std::vector<std::vector<Tile*>> tileTwo;
+	std::vector<std::vector<Tile*>> tileTree;
 };
 
