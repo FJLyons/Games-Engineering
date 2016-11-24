@@ -25,6 +25,7 @@ Tile::Tile(Rect r, Type t, int x, int y, int w)
 		break;
 	case Type::WALL:
 		_col = Colour(0, 0, 0, 255);
+		travelCost = 100000;
 		break;
 	case Type::OCCUPIED:
 		_col = Colour(0, 0, 255, 255);
@@ -91,6 +92,7 @@ void Tile::setWall()
 {
 	_type = Tile::Type::WALL;
 	_col = Colour(0, 0, 0, 255);
+	travelCost = 100000;
 }
 
 void Tile::setPath()

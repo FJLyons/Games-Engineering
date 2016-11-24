@@ -45,14 +45,14 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 				float yPos = y + (y * height);
 
 
-				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR, x, y, 10);
+				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR, x, y, 0);
 
 
-				// Create Spawn
-				if (y >= 13 && y <= 26 && x >= 18 && x <= 27) { temp->setSpawn(); }
+				//// Create Spawn
+				//if (y >= 13 && y <= 26 && x >= 18 && x <= 27) { temp->setSpawn(); }
 
-				// Create Goal
-				if (y >= 9 && y <= 19 && x >= 2 && x <= 10) { temp->setGoal(); }
+				//// Create Goal
+				//if (y >= 9 && y <= 19 && x >= 2 && x <= 10) { temp->setGoal(); }
 
 				// Create Walls
 				if (x == 6 && y >= 3) { temp->setWall(); }
@@ -83,7 +83,7 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 				float xPos = 0 + (x * width);
 				float yPos = 0 + (y * height);
 
-				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR, x, y, 10);
+				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR, x, y, 0);
 
 				if (y == 90)
 				{
@@ -114,7 +114,7 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 				float xPos = 0 + (x * width);
 				float yPos = 0 + (y * height);
 
-				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR, x, y, 10);
+				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR, x, y, 0);
 
 				if (y == 990)
 				{

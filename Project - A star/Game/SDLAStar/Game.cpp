@@ -43,8 +43,8 @@ bool Game::init(int levelNumber) {
 	// Objects
 	tiles = LevelLoader::instance()->LoadLevel(levelNumber);
 
-	startTile = tiles[0][14];
-	endTile = tiles[29][14];
+	startTile = tiles[0][0];
+	endTile = tiles[19][19];
 
 	pathfinder->Find(startTile, endTile,  tiles);
 
