@@ -87,7 +87,7 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 
 				if (y == 90)
 				{
-					temp->setWall();
+					//temp->setWall();
 				}
 
 				tileTwo[x].push_back(temp);
@@ -118,7 +118,7 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 
 				if (y == 990)
 				{
-					temp->setWall();
+					//temp->setWall();
 				}
 
 				tileTree[x].push_back(temp);

@@ -4,8 +4,8 @@
 
 #include "Renderer.h"
 #include "GameObject.h"
-#include "InputManager.h"
 #include "EventListener.h"
+#include "InputManager.h"
 #include "Tile.h"
 
 #include "Pathfinder.h"

@@ -13,28 +13,108 @@ InputManager::~InputManager()
 
 void InputManager::AddListener(EventListener::Event evt,EventListener *listener)
 {
-	if (listeners.find(evt) == listeners.end()) { //event not in map add it.
+	if (listeners.find(evt) == listeners.end()) 
+	{ 
+		//event not in map add it.
 		listeners[evt] = new std::vector<EventListener*>();
 	}
 
 	listeners[evt]->push_back(listener);
-
 }
 
 //Send the events to interested objects
 void InputManager::Dispatch(EventListener::Event evt)
 {
 
-	if (listeners.find(evt) != listeners.end()) {
-		
-		for (auto const &listener : *listeners[evt]) { //go through all listeners for this event
+	if (listeners.find(evt) != listeners.end()) 
+	{
+		//go through all listeners for this event
+		for (auto const &listener : *listeners[evt]) 
+		{ 
 			listener->onEvent(evt); //Call on event for the listener
-
 		}
-	}
-	
+	}	
 }
 
+void InputManager::Update(SDL_Event event)
+{
+	sdlEvent = event;
+}
+
+bool InputManager::KeyPressed(SDL_Keycode key)
+{
+	if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.sym == key)
+	{
+		return true;
+		previousKey = key;
+	}
+	return false;
+}
+
+bool InputManager::KeyPressed(std::vector<SDL_Keycode> keys)
+{
+	for (int i = 0; i < keys.size(); i++)
+	{
+		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.sym == keys[i])
+		{
+			return true;
+			previousKeys.push_back(keys[i]);
+		}
+	}
+	return false;
+}
+
+bool InputManager::KeyReleased(SDL_Keycode key)
+{
+	if (sdlEvent.type == SDL_KEYUP && sdlEvent.key.keysym.sym == key)
+	{
+		return true;
+		previousKey = SDLK_UNKNOWN;
+	}
+	return false;
+}
+
+bool InputManager::KeyReleased(std::vector<SDL_Keycode> keys)
+{
+	for (int i = 0; i < keys.size(); i++)
+	{
+		if (sdlEvent.type == SDL_KEYUP && sdlEvent.key.keysym.sym == keys[i])
+		{
+			return true;
+			previousKeys.empty();
+		}
+	}
+	return false;
+}
+
+bool InputManager::KeyHeld(SDL_Keycode key)
+{
+	if (previousKey == key)
+	{
+		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.sym == key)
+		{
+			return true;
+			previousKey = key;
+		}
+	}
+	return false;
+}
+
+bool InputManager::KeyHeld(std::vector<SDL_Keycode> keys)
+{
+	if (previousKeys == keys)
+	{
+		for (int i = 0; i < keys.size(); i++)
+		{
+			if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.sym == keys[i])
+			{
+				return true;
+				previousKeys.push_back(keys[i]);
+			}
+		}
+	}
+	return false;
+}
 
 //Gnereate events
 void InputManager::ProcessInput(bool endGameScreen)

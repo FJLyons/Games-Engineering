@@ -11,7 +11,7 @@ using namespace std;
 #include "LevelLoader.h"
 
 
-const int SCREEN_FPS = 100;
+const int SCREEN_FPS = 100000;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 
 
@@ -43,9 +43,24 @@ bool Game::init(int levelNumber) {
 	// Objects
 	tiles = LevelLoader::instance()->LoadLevel(levelNumber);
 
+	//if (levelNumber == 1)
+	//{
+	//	startTile = tiles[0][0];
+	//	endTile = tiles[19][19];
+	//}
+	//else if (levelNumber == 2)
+	//{
+	//	startTile = tiles[0][0];
+	//	endTile = tiles[99][99];
+	//}
+	//else if (levelNumber == 3)
+	//{
+	//	startTile = tiles[0][0];
+	//	endTile = tiles[999][999];
+	//}
+
 	startTile = tiles[0][0];
 	endTile = tiles[19][19];
-
 	pathfinder->Find(startTile, endTile,  tiles);
 
 	// Time

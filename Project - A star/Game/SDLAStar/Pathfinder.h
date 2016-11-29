@@ -121,9 +121,12 @@ public:
 					else if (totalCost < surroundingTile->G)
 					{
 						surroundingTile->parentTile = currentTile;
+
 						surroundingTile->G = totalCost;
+
 						int diff = abs(surroundingTile->xPos - endTile->xPos) + abs(surroundingTile->yPos - endTile->yPos); // distance to start
 						surroundingTile->H = 10 * diff; // distance to end
+
 						surroundingTile->F = surroundingTile->G + surroundingTile->H; // total distance
 					}					
 				}			// y complete
