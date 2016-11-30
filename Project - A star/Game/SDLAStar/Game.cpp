@@ -30,9 +30,6 @@ Game::~Game()
 bool Game::init(int levelNumber) {	
 	Size2D winSize(2000,2000);
 
-	//creates our renderer, which looks after drawing and the window
-	renderer.init(winSize, "A Star Threading");
-
 	//set up the viewport
 	Size2D vpSize(2000, 2000);
 	Point2D vpBottomLeft(0, 0);
@@ -43,25 +40,37 @@ bool Game::init(int levelNumber) {
 	// Objects
 	tiles = LevelLoader::instance()->LoadLevel(levelNumber);
 
-	//if (levelNumber == 1)
-	//{
-	//	startTile = tiles[0][0];
-	//	endTile = tiles[19][19];
-	//}
-	//else if (levelNumber == 2)
-	//{
-	//	startTile = tiles[0][0];
-	//	endTile = tiles[99][99];
-	//}
-	//else if (levelNumber == 3)
-	//{
-	//	startTile = tiles[0][0];
-	//	endTile = tiles[999][999];
-	//}
+	if (levelNumber == 1)
+	{
+		startTile = tiles[0][0];
+		endTile = tiles[19][19];
+		scale = 1;
+	}
+	else if (levelNumber == 2)
+	{
+		startTile = tiles[0][0];
+		endTile = tiles[99][99];
+		scale = 3;
+	}
+	else if (levelNumber == 3)
+	{
+		startTile = tiles[0][0];
+		endTile = tiles[999][999];
+		scale = 30;
+	}
+	else
+	{
+		startTile = tiles[0][0];
+		endTile = tiles[19][19];
+	}
 
-	startTile = tiles[0][0];
-	endTile = tiles[19][19];
-	pathfinder->Find(startTile, endTile,  tiles);
+	// A Star
+	pathfinder->Find(startTile, endTile, tiles);
+
+	// Camera
+	camera = new Camera2D(Rect(0, 0, winSize.w, winSize.h), scale);
+	camera->setLevelSize(Size2D(winSize.w, winSize.h));
+	renderer.setNewCamera(camera);
 
 	// Time
 	lastTime = LTimer::gameTime();
@@ -70,9 +79,19 @@ bool Game::init(int levelNumber) {
 	inputManager.AddListener(EventListener::Event::QUIT, this);
 	inputManager.AddListener(EventListener::Event::SPACE, this);
 	inputManager.AddListener(EventListener::Event::ANYKEY, this);
+	inputManager.AddListener(EventListener::Event::UP, this);
+	inputManager.AddListener(EventListener::Event::DOWN, this);
+	inputManager.AddListener(EventListener::Event::LEFT, this);
+	inputManager.AddListener(EventListener::Event::RIGHT, this);
+	inputManager.AddListener(EventListener::Event::ZOOM_IN, this);
+	inputManager.AddListener(EventListener::Event::ZOOM_OUT, this);
 
 	// Bools
 	progress = false;
+
+
+	//creates our renderer, which looks after drawing and the window
+	renderer.init(winSize, "A Star Threading", camera);
 
 	return true;
 }
@@ -118,12 +137,26 @@ void Game::render()
 {
 	renderer.clear(Colour(0,0,0));// prepare for new frame
 	
-	//render every object
-	for (int i = 0; i < tiles.size(); i++)
+	////render every object
+	//for (int i = 0; i < tiles.size(); i++)
+	//{
+	//	for (int j = 0; j < tiles.size(); j++)
+	//	{
+	//		tiles.at(i).at(j)->Render(renderer);
+	//	}
+	//}
+
+	Rect camPos = (camera->getViewport() / camera->getScale());
+	int maxColumn = (camPos.pos.x + camPos.size.w) / 30;
+	int maxRow = (camPos.pos.y + camPos.size.h) / 30;
+	for (int column = camPos.pos.x / 30; column <= maxColumn; column++)
 	{
-		for (int j = 0; j < tiles.size(); j++)
+		for (int row = camPos.pos.y / 30; row <= maxRow; row++)
 		{
-			tiles.at(i).at(j)->Render(renderer);
+			if (row < 30 && column < 30 && row >= 0 && column >= 0)
+			{
+				tiles.at(column).at(row)->Render(renderer);
+			}
 		}
 	}
 
@@ -159,18 +192,36 @@ void Game::loop()
 	}
 }
 
-void Game::onEvent(EventListener::Event evt) {
-		
-	if (evt == EventListener::Event::QUIT) {
+void Game::onEvent(EventListener::Event evt) 
+{
+	switch (evt)
+	{
+	case (EventListener::Event::QUIT):
 		SceneManager::instance()->destroy();
-	}
-
-	if (evt == EventListener::Event::SPACE) {
+		break;
+	case (EventListener::Event::SPACE):
 		progress = true;
-	}
-
-	if (evt == EventListener::Event::ANYKEY) {
-		
+		break;
+	case (EventListener::Event::ANYKEY):
+		break;
+	case(EventListener::Event::LEFT):
+		camera->MoveLeft();
+		break;
+	case(EventListener::Event::RIGHT):
+		camera->MoveRight();
+		break;
+	case(EventListener::Event::UP):
+		camera->MoveUp();
+		break;
+	case(EventListener::Event::DOWN):
+		camera->MoveDown();
+		break;
+	case(EventListener::Event::ZOOM_IN):
+		camera->increaseScale();
+		break;
+	case(EventListener::Event::ZOOM_OUT):
+		camera->decreaseScale();
+		break;
 	}
 }
 
@@ -184,7 +235,7 @@ bool Game::initMenu(bool endGameScreen) {
 	Size2D winSize(1920, 1080);
 
 	//creates our renderer, which looks after drawing and the window
-	renderer.init(winSize, "A Star Threading");
+	renderer.init(winSize, "A Star Threading", camera);
 
 	//// Load Image
 	//if (endGameScreen == true)

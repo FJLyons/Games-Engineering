@@ -39,13 +39,25 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 		{
 			tileOne.push_back(std::vector<Tile*>());
 
+			isEven = !isEven;
+
 			for (int y = 0; y < size; y++)
 			{
 				float xPos = x + (x * width);
 				float yPos = y + (y * height);
 
 
-				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR, x, y, 0);
+				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOORE, x, y, 0);
+
+				if (isEven == false)
+				{
+					temp->setFloorO();
+					isEven = true;
+				}
+				else
+				{
+					isEven = false;
+				}
 
 
 				//// Create Spawn
@@ -78,18 +90,25 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 		{
 			tileTwo.push_back(std::vector<Tile*>());
 
+			isEven = !isEven;
+
 			for (int y = 0; y < size; y++)
 			{
 				float xPos = 0 + (x * width);
 				float yPos = 0 + (y * height);
 
-				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR, x, y, 0);
+				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOORE, x, y, 0);
 
-				if (y == 90)
+				if (isEven == false)
 				{
-					//temp->setWall();
+					temp->setFloorO();
+					isEven = true;
 				}
-
+				else
+				{
+					isEven = false;
+				}
+				
 				tileTwo[x].push_back(temp);
 			}
 		}
@@ -109,16 +128,23 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 		{
 			tileTree.push_back(std::vector<Tile*>());
 
+			isEven = !isEven;
+
 			for (int y = 0; y < size; y++)
 			{
 				float xPos = 0 + (x * width);
 				float yPos = 0 + (y * height);
 
-				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOOR, x, y, 0);
+				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOORE, x, y, 0);
 
-				if (y == 990)
+				if (isEven == false)
 				{
-					//temp->setWall();
+					temp->setFloorO();
+					isEven = true;
+				}
+				else
+				{
+					isEven = false;
 				}
 
 				tileTree[x].push_back(temp);

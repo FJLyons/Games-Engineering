@@ -12,7 +12,13 @@ public:
 	enum Event {
 		SPACE	,
 		QUIT	,
-		ANYKEY
+		ANYKEY	,
+		UP		,
+		DOWN	,
+		LEFT	,
+		RIGHT	,
+		ZOOM_IN	,
+		ZOOM_OUT,
 	};
 
 

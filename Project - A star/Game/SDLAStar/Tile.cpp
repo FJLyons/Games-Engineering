@@ -11,25 +11,26 @@ Tile::Tile(Rect r, Type t, int x, int y, int w)
 {
 	switch (_type)
 	{//set the colour based on its type
-	case Type::SPAWN:
-		_col = Colour(255, 125, 125, 125);
+	case Type::PLAYER:
+		_col = Colour(0, 255, 0, 255);
 		break;
-	case Type::GOAL:
-		_col = Colour(125, 255, 125, 125);
-		break;
-	case Type::PATH:
-		_col = Colour(125, 125, 255, 125);
-		break;
-	case Type::FLOOR:
-		_col = Colour(255, 255, 255, 255);
+	case Type::ENEMY:
+		_col = Colour(255, 0, 0, 255);
 		break;
 	case Type::WALL:
 		_col = Colour(0, 0, 0, 255);
 		travelCost = 100000;
 		break;
-	case Type::OCCUPIED:
-		_col = Colour(0, 0, 255, 255);
+	case Type::FLOORE:
+		_col = Colour(255, 255, 255, 255);
 		break;
+	case Type::FLOORO:
+		_col = Colour(200, 200, 200, 255);
+		break;
+	case Type::PATH:
+		_col = Colour(125, 125, 255, 125);
+		break;
+
 	default:
 		break;
 	}
@@ -76,16 +77,16 @@ void Tile::setColour(int r, int g, int b, int a)
 	_col = Colour(r, g, b, a);
 }
 
-void Tile::setSpawn()
+void Tile::setPlayer()
 {
-	_type = Tile::Type::SPAWN;
-	_col = Colour(255, 125, 125, 125);
+	_type = Tile::Type::PLAYER;
+	_col = Colour(0, 255, 0, 255);
 }
 
-void Tile::setGoal()
+void Tile::setEnemy()
 {
-	_type = Tile::Type::GOAL;
-	_col = Colour(125, 255, 125, 125);
+	_type = Tile::Type::ENEMY;
+	_col = Colour(255, 0, 0, 255);
 }
 
 void Tile::setWall()
@@ -95,8 +96,20 @@ void Tile::setWall()
 	travelCost = 100000;
 }
 
+void Tile::setFloorE()
+{
+	_type = Tile::Type::FLOORE;
+	_col = Colour(255, 255, 255, 255);
+}
+
+void Tile::setFloorO()
+{
+	_type = Tile::Type::FLOORO;
+	_col = Colour(200, 200, 200, 255);
+}
+
 void Tile::setPath()
 {
 	_type = Tile::Type::PATH;
-	_col = Colour(125, 125, 255, 125);
+	_col = Colour(0, 0, 255, 255);
 }

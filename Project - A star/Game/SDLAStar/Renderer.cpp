@@ -19,7 +19,9 @@ Renderer::Renderer():sdl_renderer(NULL)
 	
 }
 
-bool Renderer::init(const Size2D& winSize,const char* title) {
+bool Renderer::init(const Size2D& winSize,const char* title, Camera2D* cam) 
+{
+	m_camera = cam;
 
 	int e=SDL_Init(SDL_INIT_EVERYTHING);              // Initialize SDL2
 	windowSize = winSize;
@@ -56,8 +58,15 @@ bool Renderer::init(const Size2D& winSize,const char* title) {
 	return true;
 }
 
+void Renderer::setNewCamera(Camera2D * newCam)
+{
+	m_camera = newCam;
+}
+
 //draw a rect in pixel coordinates
 void Renderer::drawRect(const Rect& r, const Colour& c) {
+
+	Rect tRect = cameraTransform(r);
 	SDL_SetRenderDrawColor(sdl_renderer, c.r, c.g, c.b, c.a);
 	SDL_Rect sr;
 	sr.h = (int)r.size.h;
@@ -114,4 +123,12 @@ void Renderer::destroy() {
 
 Renderer::~Renderer()
 {
+}
+
+Rect Renderer::cameraTransform(Rect r)
+{
+	r = r * m_camera->getScale();
+	r.pos.x -= m_camera->getViewport().pos.x;
+	r.pos.y -= m_camera->getViewport().pos.y;
+	return r;
 }

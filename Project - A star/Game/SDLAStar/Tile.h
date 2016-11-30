@@ -10,12 +10,12 @@ public:
 	//type to determine the type of block
 	enum class Type
 	{
-		SPAWN,
-		GOAL,
-		FLOOR,
-		PATH,
+		PLAYER,
+		ENEMY,
 		WALL,
-		OCCUPIED,
+		FLOORE,
+		FLOORO,
+		PATH
 	};
 
 	Tile(Rect r, Type t, int x, int y, int w);
@@ -31,38 +31,12 @@ public:
 
 	void setColour(int, int, int, int);
 
-	void setSpawn();
-	void setGoal();
+	void setPlayer();
+	void setEnemy();
 	void setWall();
+	void setFloorE();
+	void setFloorO();
 	void setPath();
-
-	// Node Functionality
-	inline Tile& operator=(const Tile& target)
-	{
-		if (*this != target)
-		{
-			xPos = target.xPos;
-			yPos = target.yPos;
-			travelCost = target.travelCost;
-		}
-
-		return *this;
-	}
-
-	inline bool operator==(const Tile& target) const
-	{
-		return F == target.F && F == target.F;
-	}
-
-	inline bool operator!=(const Tile& target) const
-	{
-		return !(*this == target);
-	}
-
-	inline bool operator<(const Tile& target) const
-	{
-		return target.F < F;
-	}
 
 	int xPos, yPos;
 	

@@ -23,7 +23,7 @@ public:
 	{
 		for (int i = 0; i < list.size(); i++)
 		{
-			list[i]->setSpawn();
+			//list[i]->setSpawn();
 			if (list[i]->xPos == x && list[i]->yPos == y)
 			{
 				return true;

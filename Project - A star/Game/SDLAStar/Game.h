@@ -10,12 +10,17 @@
 
 #include "Pathfinder.h"
 
+#include "Camera2D.h"
+
 
 /** The game objct whic manages the game loop*/
 class Game:public EventListener
 {
 	InputManager inputManager;
 	Renderer renderer;
+
+	Camera2D * camera;
+	float scale;
 
 	std::vector<GameObject*> gameObjects;
 

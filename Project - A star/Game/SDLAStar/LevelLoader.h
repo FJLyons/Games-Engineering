@@ -21,6 +21,8 @@ public:
 
 	std::vector<std::vector<Tile*>> LoadLevel(int levelNumber);
 
+	bool isEven = false;
+
 private:
 	static LevelLoader* _instance;
 	std::vector<std::vector<Tile*>> tileOne;

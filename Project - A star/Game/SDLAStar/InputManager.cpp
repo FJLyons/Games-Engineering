@@ -124,9 +124,7 @@ void InputManager::ProcessInput(bool endGameScreen)
 	{
 		switch (e.type) 
 		{
-			/* Keyboard event */
 			case SDL_KEYDOWN:
-
 				if (endGameScreen == true && e.key.keysym.sym == SDLK_q)
 				{
 					Dispatch(EventListener::Event::QUIT);
@@ -136,15 +134,39 @@ void InputManager::ProcessInput(bool endGameScreen)
 					Dispatch(EventListener::Event::ANYKEY);
 				}
 
-				switch (e.key.keysym.sym) 
+				switch (e.key.keysym.sym)
 				{
-					case SDLK_ESCAPE:
-						Dispatch(EventListener::Event::QUIT);
-						break;
+				case SDLK_ESCAPE:
+					Dispatch(EventListener::Event::QUIT);
+					break;
 
-					case SDLK_SPACE:
-						Dispatch(EventListener::Event::SPACE);
-						break;
+				case SDLK_SPACE:
+					Dispatch(EventListener::Event::SPACE);
+					break;
+
+				case SDLK_w:
+					Dispatch(EventListener::Event::DOWN); // Flipped because drawing from the bottom left
+					break; 
+
+				case SDLK_s:
+					Dispatch(EventListener::Event::UP);
+					break;
+
+				case SDLK_a:
+					Dispatch(EventListener::Event::LEFT);
+					break;
+
+				case SDLK_d:
+					Dispatch(EventListener::Event::RIGHT);
+					break;
+
+				case SDLK_DOWN:
+					Dispatch(EventListener::Event::ZOOM_OUT);
+					break;
+
+				case SDLK_UP:
+					Dispatch(EventListener::Event::ZOOM_IN);
+					break;
 				}
 				break;
 			
@@ -153,9 +175,13 @@ void InputManager::ProcessInput(bool endGameScreen)
 				Dispatch(EventListener::Event::QUIT);
 				break;
 
+			//case SDL_MOUSEWHEEL:
+			//	if (e.wheel.y)
+			//	{
+
 			default:
 				break;
-		}
+		} // e.type
 	}
 	//check for exit
 }
