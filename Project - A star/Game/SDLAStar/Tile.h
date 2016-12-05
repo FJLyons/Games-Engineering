@@ -38,6 +38,8 @@ public:
 	void setFloorO();
 	void setPath();
 
+	int getSize();
+
 	int xPos, yPos;
 	
 	float travelCost;

@@ -3,60 +3,52 @@
 #include <iostream>
 using namespace std;
 
-
-
 #include "LTimer.h"
 #include "Game.h"
 #include "SceneManager.h"
 #include "LevelLoader.h"
 
-
-const int SCREEN_FPS = 100000;
+const int SCREEN_FPS = 1000000;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
-
 
 Game::Game()
 {
-	pause = false;
 	quit = false;
 }
-
 
 Game::~Game()
 {
 }
 
-
 bool Game::init(int levelNumber) {	
+	// Set Window Size
 	Size2D winSize(2000,2000);
-
-	//set up the viewport
-	Size2D vpSize(2000, 2000);
-	Point2D vpBottomLeft(0, 0);
-
-	Rect vpRect(vpBottomLeft, vpSize);
-	renderer.setViewPort(vpRect);
+	srand(LTimer::gameTime());
 
 	// Objects
 	tiles = LevelLoader::instance()->LoadLevel(levelNumber);
 
-	if (levelNumber == 1)
+	// Set Up Each Level
+	if (levelNumber == 0)
 	{
 		startTile = tiles[0][0];
 		endTile = tiles[19][19];
-		scale = 1;
+		scale = 30.0f/30.0f;
+		levelSize = 30;
+	}
+	else if (levelNumber == 1)
+	{
+		startTile = tiles[0][0];
+		endTile = tiles[33][33];
+		scale = 100.0f/30.0f;
+		levelSize = 100;
 	}
 	else if (levelNumber == 2)
 	{
 		startTile = tiles[0][0];
-		endTile = tiles[99][99];
-		scale = 3;
-	}
-	else if (levelNumber == 3)
-	{
-		startTile = tiles[0][0];
-		endTile = tiles[999][999];
-		scale = 30;
+		endTile = tiles[9][9];
+		scale = 1000.0f/30.0f;
+		levelSize = 1000;
 	}
 	else
 	{
@@ -87,8 +79,8 @@ bool Game::init(int levelNumber) {
 	inputManager.AddListener(EventListener::Event::ZOOM_OUT, this);
 
 	// Bools
+	quit = false;
 	progress = false;
-
 
 	//creates our renderer, which looks after drawing and the window
 	renderer.init(winSize, "A Star Threading", camera);
@@ -96,92 +88,70 @@ bool Game::init(int levelNumber) {
 	return true;
 }
 
-
-void Game::destroy()
-{
-	//empty out the game object vector before quitting
-	for (int i = 0; i < tiles.size(); i++)
-	{
-		for (int j = 0; j < tiles.size(); j++)
-		{
-			delete tiles.at(i).at(j);
-		}
-	}
-
-	tiles.clear();
-	renderer.destroy();
-}
-
-//** calls update on all game entities*/
 void Game::update()
 {
 	unsigned int currentTime = LTimer::gameTime();//millis since game started
 	float deltaTime = (currentTime - lastTime) / 1000.0;//time since last update
 
-	//call update on all game objects
-	for (int i = 0; i < tiles.size(); i++)
-	{
-		for (int j = 0; j < tiles.size(); j++)
-		{
-			tiles.at(i).at(j)->Update(deltaTime);
-		}
-	}
-
 	//save the curent time for next frame
 	lastTime = currentTime;
 }
 
-//** calls render on all game entities*/
-
 void Game::render()
 {
 	renderer.clear(Colour(0,0,0));// prepare for new frame
-	
-	////render every object
-	//for (int i = 0; i < tiles.size(); i++)
-	//{
-	//	for (int j = 0; j < tiles.size(); j++)
-	//	{
-	//		tiles.at(i).at(j)->Render(renderer);
-	//	}
-	//}
 
+	// Culling
+	int tilesDrawn = 0;
 	Rect camPos = (camera->getViewport() / camera->getScale());
-	int maxColumn = (camPos.pos.x + camPos.size.w) / 30;
-	int maxRow = (camPos.pos.y + camPos.size.h) / 30;
-	for (int column = camPos.pos.x / 30; column <= maxColumn; column++)
+	int maxColumn = (camPos.pos.x + camPos.size.w) / tiles[0][0]->getSize();
+	int maxRow = (camPos.pos.y + camPos.size.h) / tiles[0][0]->getSize();
+
+	for (int column = camPos.pos.x / tiles[0][0]->getSize(); column <= maxColumn; column++)
 	{
-		for (int row = camPos.pos.y / 30; row <= maxRow; row++)
+		for (int row = camPos.pos.y / tiles[0][0]->getSize(); row <= maxRow; row++)
 		{
-			if (row < 30 && column < 30 && row >= 0 && column >= 0)
+			if (row < levelSize && column < levelSize && row >= 0 && column >= 0)
 			{
 				tiles.at(column).at(row)->Render(renderer);
+				tilesDrawn++;
 			}
 		}
 	}
 
+	//cout << "Tiles drawn = " << tilesDrawn << endl;
+
 	renderer.present();// display the new frame (swap buffers)
 }
 
-/** update and render game entities*/
 void Game::loop()
 {
-	LTimer capTimer;//to cap framerate
+	LTimer capTimer; // cap framerate
 
-	int frameNum = 0;
-	while (!quit) { //game loop
+	while (!quit) 
+	{ 
+		//game loop
 		capTimer.start();
 
 		inputManager.ProcessInput(false);
 
+		update();
+		render();
+
 		if (progress == true)
 		{
+			for (std::vector< std::vector<Tile*> >::iterator it = tiles.begin(); it != tiles.end(); ++it)
+			{
+				for (std::vector< Tile*>::iterator it2 = (*it).begin(); it2 != (*it).end(); ++it2)
+				{
+					delete *it2;
+				}
+				(*it).clear();
+			}
+			tiles.clear();
+			tiles.shrink_to_fit();
 			break;
 		}
-
-		//if(!pause) //in pause mode don't bother updateing
-			update();
-		render();
 
 		int frameTicks = capTimer.getTicks();//time since start of frame
 		if (frameTicks < SCREEN_TICKS_PER_FRAME)
@@ -192,7 +162,8 @@ void Game::loop()
 	}
 }
 
-void Game::onEvent(EventListener::Event evt) 
+// Event manager
+void Game::onEvent(EventListener::Event evt)
 {
 	switch (evt)
 	{
@@ -225,93 +196,19 @@ void Game::onEvent(EventListener::Event evt)
 	}
 }
 
-
-
-
-
-// Menu Setup
-
-bool Game::initMenu(bool endGameScreen) {
-	Size2D winSize(1920, 1080);
-
-	//creates our renderer, which looks after drawing and the window
-	renderer.init(winSize, "A Star Threading", camera);
-
-	//// Load Image
-	//if (endGameScreen == true)
-	//{
-	//	renderer.LoadImage("endScreen.jpg");
-	//}
-	//else
-	//{
-	//	renderer.LoadImage("menu.jpg");
-	//}
-
-	lastTime = LTimer::gameTime();
-
-	//want game loop to pause
-	inputManager.AddListener(EventListener::Event::QUIT, this);
-	inputManager.AddListener(EventListener::Event::SPACE, this);
-	inputManager.AddListener(EventListener::Event::ANYKEY, this);
-
-	pause = false;
-	quit = false;
-	progress = false;
-	return true;
-}
-
-void Game::updateMenu()
+// Close app
+void Game::destroy()
 {
-	unsigned int currentTime = LTimer::gameTime();//millis since game started
-	unsigned int deltaTime = currentTime - lastTime;//time since last update
-
-	////call update on all game objects
-	//for (std::vector<Block*>::iterator i = blocks.begin(); i != blocks.end(); i++)
-	//{
-	//	(*i)->Update(deltaTime);
-	//}
-
-	//save the curent time for next frame
-	lastTime = currentTime;
-}
-
-void Game::renderMenu()
-{
-	renderer.clear(Colour(147, 112, 219));// prepare for new frame
-
-										  //render every object
-	//for (std::vector<Block*>::iterator i = blocks.begin(), e = blocks.end(); i != e; i++)
-	//{
-	//	(*i)->Render(renderer);
-	//}
-	//renderer.RenderImage();
-
-	renderer.present();// display the new frame (swap buffers)
-}
-
-void Game::loopMenu(bool endGameScreen)
-{
-	LTimer capTimer;//to cap framerate
-
-	int frameNum = 0;
-	while (!quit) { //game loop
-		capTimer.start();
-
-		inputManager.ProcessInput(endGameScreen);
-
-		//if (!pause) //in pause mode don't bother updateing
-			updateMenu();
-		renderMenu();
-
-		if (progress == true)
+	for (std::vector< std::vector<Tile*> >::iterator it = tiles.begin(); it != tiles.end(); ++it)
+	{
+		for (std::vector< Tile*>::iterator it2 = (*it).begin(); it2 != (*it).end(); ++it2)
 		{
-			break;
+			delete *it2;
 		}
-		int frameTicks = capTimer.getTicks();//time since start of frame
-		if (frameTicks < SCREEN_TICKS_PER_FRAME)
-		{
-			//Wait remaining time before going to next frame
-			SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
-		}
+		(*it).clear();
 	}
+	tiles.clear();
+	tiles.shrink_to_fit();
+	tiles.clear();
+	renderer.destroy();
 }

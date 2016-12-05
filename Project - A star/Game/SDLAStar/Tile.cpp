@@ -113,3 +113,8 @@ void Tile::setPath()
 	_type = Tile::Type::PATH;
 	_col = Colour(0, 0, 255, 255);
 }
+
+int Tile::getSize()
+{
+	return _rect.size.w;
+}

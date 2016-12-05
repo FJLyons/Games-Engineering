@@ -19,41 +19,32 @@ class Game:public EventListener
 	InputManager inputManager;
 	Renderer renderer;
 
+	std::vector<std::vector<Tile*>> tiles;
+	Tile* startTile; // enemy
+	Tile* endTile; // player
+
 	Camera2D * camera;
 	float scale;
+	int levelSize;
 
-	std::vector<GameObject*> gameObjects;
+	Pathfinder* pathfinder; // A Star
 
-	std::vector<std::vector<Tile*>> tiles;
+	// Variables
+	unsigned int lastTime; // time of last update;
 
-	Tile* startTile;
-	Tile* endTile;
-
-	Pathfinder* pathfinder;
-
-	unsigned int lastTime; //time of last update;
-
-	bool pause;
-	bool quit;
-
-	bool progress;
+	bool progress; // Move to next level
+	bool quit; // quit app
 
 public:
 	Game();
 	~Game();
 
 	bool init(int levelNumber);
-	void destroy();
-
 	void update();
 	void render();
 	void loop();
 
+	void destroy();
 	void onEvent(EventListener::Event);
-
-	bool initMenu(bool endGameScreen);
-	void updateMenu();
-	void renderMenu();
-	void loopMenu(bool endGameScreen);
 };
 

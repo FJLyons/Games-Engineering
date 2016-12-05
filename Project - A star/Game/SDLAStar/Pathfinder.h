@@ -53,6 +53,8 @@ public:
 				if (openList[i]->F <= currentTile->F)
 				{
 					currentTile = openList[i];
+					std::cout << "X:\t" << currentTile->xPos 
+					<< "\t" << "Y:\t" << currentTile->yPos << std::endl;
 				}
 			}
 
@@ -142,8 +144,8 @@ public:
 			currentTile = currentTile->parentTile;
 		}
 
-		openList.empty();
-		closedList.empty();
+		openList.clear();
+		closedList.clear();
 
 		return finalPath;
 	}						// done

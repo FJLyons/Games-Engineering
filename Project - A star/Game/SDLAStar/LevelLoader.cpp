@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "LevelLoader.h"
+#include "LTimer.h"
+#include <iostream>
 
 
 LevelLoader *LevelLoader::_instance = 0;
@@ -17,8 +19,8 @@ LevelLoader::~LevelLoader()
 LevelLoader* LevelLoader::instance()
 {
 	if (_instance == nullptr)
-	{//if our instance hasn't been initialized
-	 //initialize it
+	{
+		//if our instance hasn't been initialized initialize it
 		_instance = new LevelLoader();
 	}
 	//return the instance.
@@ -27,38 +29,69 @@ LevelLoader* LevelLoader::instance()
 
 std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 {
-	if (levelNumber == 1)
+	// Clear previous level
+	if (!tiles.empty())
 	{
-		int size = 30;
+		for (int x = 0; x < tiles.size(); x++)
+		{
+			tiles[x].clear();
+		}
+ 		tiles.clear();
+		tiles.shrink_to_fit();
+	}
 
-		float divide = 30.3f;
+	// Create Levels
+	if (levelNumber == 0)
+	{
+		// Number of tiles up and across
+		int size = 30; 
+
+		// Tile Size
+		float divide = 30.0f;
 		float width = 2000.0f / divide;
 		float height = 2000.0f / divide;
 
+		// Walls
+		const int borderWallAmount = 1;
+		int borderWall = rand() % 10 + 9;
+		int borderLength = rand() % 15 + 4;
+
+		int innerWall[2];
+		int innerLength[2];
+		for (int wallNumber = 0; wallNumber < 2; wallNumber++)
+		{
+			innerWall[wallNumber] = rand() % 9 + (wallNumber * 20);
+			innerLength[wallNumber] = rand() % 9 + 4;
+		}
+
+		// Loop through Vector
 		for (int x = 0; x < size; x++)
 		{
-			tileOne.push_back(std::vector<Tile*>());
+			// Create vectors across
+			tiles.push_back(std::vector<Tile*>());
 
+			// Swap colours for checkerboard effect
 			isEven = !isEven;
 
 			for (int y = 0; y < size; y++)
 			{
-				float xPos = x + (x * width);
-				float yPos = y + (y * height);
-
-
+				// Set tile position
+				float xPos = x * width;
+				float yPos = y * height;
+				
+				// Tile
 				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOORE, x, y, 0);
 
+				// Set floor type for checkerboard
 				if (isEven == false)
 				{
-					temp->setFloorO();
+					temp->setFloorO(); // set floor to odd
 					isEven = true;
 				}
 				else
 				{
 					isEven = false;
 				}
-
 
 				//// Create Spawn
 				//if (y >= 13 && y <= 26 && x >= 18 && x <= 27) { temp->setSpawn(); }
@@ -66,19 +99,26 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 				//// Create Goal
 				//if (y >= 9 && y <= 19 && x >= 2 && x <= 10) { temp->setGoal(); }
 
-				// Create Walls
-				if (x == 6 && y >= 3) { temp->setWall(); }
-				if (x == 13 && y >= 1 && y <= 26) { temp->setWall(); }
-				if (x == 20 && y >= 2 && y <= 27) { temp->setWall(); }
+				// Create walls
+				if(x == borderWall && y >= borderLength){ temp->setWall(); }
+				for (int wallNumber = 0; wallNumber < 2; wallNumber++)
+				{
+					if (x == innerWall[wallNumber] && 
+						y >= innerLength[wallNumber] && 
+						y < size - innerLength[wallNumber]) 
+					{ temp->setWall(); }
+				}
 
-				tileOne[x].push_back(temp);
+				// Add tile y to x vector
+				tiles[x].push_back(temp);
 			}
 		}
 
-		return tileOne;
+		// return vector of vector of tiles
+		return tiles;
 	}
 
-	else if (levelNumber == 2)
+	else if (levelNumber == 1)
 	{
 		int size = 100;
 
@@ -86,9 +126,41 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 		float width = 2000.0f / divide;
 		float height = 2000.0f / divide;
 
+		// Walls
+		const int borderWallAmount = 2;
+		int borderWall[borderWallAmount];
+		int borderLength[borderWallAmount];
+		for (int wallNumber = 0; wallNumber < borderWallAmount; wallNumber++)
+		{
+			borderWall[wallNumber] = rand() % 30 + 15  + (wallNumber * 30);
+			borderLength[wallNumber] = rand() % 45 + 15;
+			if (borderWall[wallNumber] == borderWall[wallNumber - 1])
+				borderWall[wallNumber] += 2;
+		}
+
+		const int innerWallAmount = 4;
+		int innerWall[innerWallAmount];
+		int innerLength[innerWallAmount];
+		for (int wallNumber = 0; wallNumber < innerWallAmount; wallNumber++)
+		{
+			innerWall[wallNumber] = rand() % 25 + (wallNumber * 25);
+			innerLength[wallNumber] = rand() % 30 + 15;
+			if (innerWall[wallNumber] == innerWall[wallNumber - 1])
+				innerWall[wallNumber] += 2;
+		}
+
+		for (int wallNumberX = 0; wallNumberX < borderWallAmount; wallNumberX++)
+		{
+			for (int wallNumberY = 0; wallNumberY < innerWallAmount; wallNumberY++)
+			{
+				if (borderWall[wallNumberX] == innerWall[wallNumberY])
+					innerWall[wallNumberY] += 2;
+			}
+		}
+
 		for (int x = 0; x < size; x++)
 		{
-			tileTwo.push_back(std::vector<Tile*>());
+			tiles.push_back(std::vector<Tile*>());
 
 			isEven = !isEven;
 
@@ -108,15 +180,31 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 				{
 					isEven = false;
 				}
+
+				for (int wallNumber = 0; wallNumber < borderWallAmount; wallNumber++)
+				{
+						if (x == borderWall[0] && y >= borderLength[wallNumber]) { temp->setWall(); }
+						if (x == borderWall[1] && y <= borderLength[wallNumber]) { temp->setWall(); }
+				}
+
+				for (int wallNumber = 0; wallNumber < innerWallAmount; wallNumber++)
+				{
+					if (x == innerWall[wallNumber] &&
+						y >= innerLength[wallNumber] &&
+						y < size - innerLength[wallNumber])
+					{
+						temp->setWall();
+					}
+				}
 				
-				tileTwo[x].push_back(temp);
+				tiles[x].push_back(temp);
 			}
 		}
 
-		return tileTwo;
+		return tiles;
 	}
 
-	else if (levelNumber == 3)
+	else if (levelNumber == 2)
 	{
 		int size = 1000;
 
@@ -124,9 +212,41 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 		float width = 2000.0f / divide;
 		float height = 2000.0f / divide;
 
+		// Walls
+		const int borderWallAmount = 4;
+		int borderWall[borderWallAmount];
+		int borderLength[borderWallAmount];
+		for (int wallNumber = 0; wallNumber < borderWallAmount; wallNumber++)
+		{
+			borderWall[wallNumber] = rand() % 200 + 50 + (wallNumber * 250);
+			borderLength[wallNumber] = rand() % 750 + 100;
+			if (borderWall[wallNumber] == borderWall[wallNumber - 1])
+				borderWall[wallNumber] += 10;
+		}
+
+		const int innerWallAmount = 14;
+		int innerWall[innerWallAmount];
+		int innerLength[innerWallAmount];
+		for (int wallNumber = 0; wallNumber < innerWallAmount; wallNumber++)
+		{
+			innerWall[wallNumber] = rand() % 65 + (wallNumber * 65);
+			innerLength[wallNumber] = rand() % 400 + 95;
+			if (innerWall[wallNumber] == innerWall[wallNumber - 1])
+				innerWall[wallNumber] += 10;
+		}
+
+		for (int wallNumberX = 0; wallNumberX < borderWallAmount; wallNumberX++)
+		{
+			for (int wallNumberY = 0; wallNumberY < innerWallAmount; wallNumberY++)
+			{
+				if (borderWall[wallNumberX] == innerWall[wallNumberY])
+					innerWall[wallNumberY] += 10;
+			}
+		}
+
 		for (int x = 0; x < size; x++)
 		{
-			tileTree.push_back(std::vector<Tile*>());
+			tiles.push_back(std::vector<Tile*>());
 
 			isEven = !isEven;
 
@@ -145,12 +265,89 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 				else
 				{
 					isEven = false;
+				} 
+
+				for (int wallNumber = 0; wallNumber < borderWallAmount; wallNumber++)
+				{
+					if (x == borderWall[0] && y >= borderLength[wallNumber]) { temp->setWall(); }
+					if (x == borderWall[1] && y <= borderLength[wallNumber]) { temp->setWall(); }
+					if (x == borderWall[2] && y >= borderLength[wallNumber]) { temp->setWall(); }
+					if (x == borderWall[3] && y <= borderLength[wallNumber]) { temp->setWall(); }
 				}
 
-				tileTree[x].push_back(temp);
+				for (int wallNumber = 0; wallNumber < innerWallAmount; wallNumber++)
+				{
+					if (x == innerWall[wallNumber] &&
+						y >= innerLength[wallNumber] &&
+						y < size - innerLength[wallNumber])
+					{
+						temp->setWall();
+					}
+				}
+
+				tiles[x].push_back(temp);
 			}
 		}
 
-		return tileTree;
+		return tiles;
 	}
 }
+
+
+//void LevelLoader::createBorderWalls(int size, int wall, int length, int number)
+//{
+//	if (wall == 1) // Top
+//	{
+//		borderWallX[number] = rand() % size;
+//		borderWallY[number] = length;
+//	}
+//
+//	else if (wall == 2) // Bottom
+//	{
+//		borderWallX[number] = rand() % size;
+//		borderWallY[number] = length;
+//	}
+//
+//	for (int i = 1; i < number; i++)
+//	{
+//		if (borderWallX[number] == borderWallX[i])
+//		{
+//			createBorderWalls(size, wall, length, i);
+//		}
+//		if (borderWallX[number] == borderWallX[i + 1] || borderWallX[number] == borderWallX[i - 1])
+//		{
+//			createBorderWalls(size, wall, length, i);
+//		}
+//	}
+//
+//	std::cout << "Border\t" << number << " = X: " << borderWallX[number] << "\tY: " << borderWallY[number]  <<std::endl;
+//}
+//
+//void LevelLoader::createInnerWalls(int size, int wall, int range, int number)
+//{
+//	if (wall == 1) // Top
+//	{
+//		innerWallX[number] = rand() % size;
+//		innerWallY[number] = range;
+//	}
+//
+//	else if (wall == 2) // Bottom
+//	{
+//		innerWallX[number] = rand() % size;
+//		innerWallY[number] = range;
+//	}
+//
+//	for (int i = 1; i < number; i++)
+//	{
+//		if (innerWallX[number] == innerWallX[i])
+//		{
+//			createInnerWalls(size, wall, range, i);
+//		}
+//		if (innerWallX[number] == innerWallX[i + 1] || innerWallX[number] == innerWallX[i - 1])
+//		{
+//			createInnerWalls(size, wall, range, i);
+//		}
+//	}
+//
+//	std::cout << "Inner\t" << number << " = X: " << innerWallX[number] << "\tY: " << innerWallY[number] << std::endl;
+//}

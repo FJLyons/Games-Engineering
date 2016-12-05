@@ -25,7 +25,6 @@ void InputManager::AddListener(EventListener::Event evt,EventListener *listener)
 //Send the events to interested objects
 void InputManager::Dispatch(EventListener::Event evt)
 {
-
 	if (listeners.find(evt) != listeners.end()) 
 	{
 		//go through all listeners for this event
@@ -38,7 +37,7 @@ void InputManager::Dispatch(EventListener::Event evt)
 
 void InputManager::Update(SDL_Event event)
 {
-	sdlEvent = event;
+	sdlEvent = event; // Not needed if within event listener
 }
 
 bool InputManager::KeyPressed(SDL_Keycode key)
@@ -117,24 +116,15 @@ bool InputManager::KeyHeld(std::vector<SDL_Keycode> keys)
 }
 
 //Gnereate events
-void InputManager::ProcessInput(bool endGameScreen)
+void InputManager::ProcessInput(bool menuScreen)
 {
-	SDL_Event e;
-	while (SDL_PollEvent(&e) != 0)
+	SDL_Event evn;
+	while (SDL_PollEvent(&evn) != 0)
 	{
-		switch (e.type) 
+		switch (evn.type)
 		{
 			case SDL_KEYDOWN:
-				if (endGameScreen == true && e.key.keysym.sym == SDLK_q)
-				{
-					Dispatch(EventListener::Event::QUIT);
-				}
-				else
-				{
-					Dispatch(EventListener::Event::ANYKEY);
-				}
-
-				switch (e.key.keysym.sym)
+				switch (evn.key.keysym.sym)
 				{
 				case SDLK_ESCAPE:
 					Dispatch(EventListener::Event::QUIT);
@@ -145,11 +135,11 @@ void InputManager::ProcessInput(bool endGameScreen)
 					break;
 
 				case SDLK_w:
-					Dispatch(EventListener::Event::DOWN); // Flipped because drawing from the bottom left
+					Dispatch(EventListener::Event::UP); // Flipped because drawing from the bottom left
 					break; 
 
 				case SDLK_s:
-					Dispatch(EventListener::Event::UP);
+					Dispatch(EventListener::Event::DOWN);
 					break;
 
 				case SDLK_a:
@@ -170,18 +160,12 @@ void InputManager::ProcessInput(bool endGameScreen)
 				}
 				break;
 			
-			/* SDL_QUIT event (window close) */
 			case SDL_QUIT:
 				Dispatch(EventListener::Event::QUIT);
 				break;
 
-			//case SDL_MOUSEWHEEL:
-			//	if (e.wheel.y)
-			//	{
-
 			default:
 				break;
-		} // e.type
+		}
 	}
-	//check for exit
 }

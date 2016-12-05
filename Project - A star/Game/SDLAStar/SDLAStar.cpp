@@ -11,7 +11,7 @@ using namespace std;
 
 int main()
 {
-	SceneManager::instance()->startGame();
+	SceneManager::instance()->init();
 
 	return 0;
 }

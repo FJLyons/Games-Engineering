@@ -17,8 +17,7 @@
 class InputManager
 {
 	//dictionary holding a list of litener objs for each event type
-	std::map<
-		EventListener::Event, 
+	std::map<EventListener::Event, 
 		std::vector<EventListener*>* //pointer to vec of eventlisteners
 		> listeners;
 

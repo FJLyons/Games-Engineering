@@ -23,47 +23,31 @@ SceneManager* SceneManager::instance()
 	return _instance;
 }
 
-void SceneManager::startMenu()
-{
-	endgamescreen = false;
-	game[0].initMenu(endgamescreen);
-	game[0].loopMenu(endgamescreen);
-	game[0].destroy();
-	currentLevel++;
-	goToLevel(currentLevel);
-}
-
-void SceneManager::startGame()
+void SceneManager::init()
 {
 	currentLevel = 0;
-	maxlevels = 4;
-	startMenu();
+	maxlevels = 2;
+	goToLevel(0);
 }
 
 void SceneManager::goToLevel(int levelNumber)
 {
-	if (levelNumber != maxlevels)
+	if (!game[levelNumber].init(levelNumber)) 
 	{
-		if (!game[levelNumber].init(levelNumber)) {
-			cout << "Failed to init game" << '\n';
-		}
-		game[levelNumber].loop();
-		game[levelNumber].destroy();
-		if (currentLevel != maxlevels)
-		{
-			currentLevel++;
-			goToLevel(currentLevel);
-		}
+		cout << "Failed to init game" << '\n';
 	}
+	game[levelNumber].loop();
+	game[levelNumber].destroy();
 
 	if (currentLevel == maxlevels)
 	{
-		endgamescreen = true;
-		game[0].initMenu(endgamescreen);
-		game[0].loopMenu(endgamescreen);
-		game[0].destroy();
 		currentLevel = 0;
-		startMenu();
+		goToLevel(currentLevel);
+	}
+	else if (currentLevel != maxlevels)
+	{
+		currentLevel++;
+		goToLevel(currentLevel);
 	}
 }
 
@@ -74,6 +58,6 @@ void SceneManager::destroy()
 		game[i].destroy();
 
 	}
-	exit(0);
+	exit(0); // Close Application
 }
 

@@ -19,11 +19,11 @@ public:
 	void setLevelSize(Size2D size);
 
 private:
-	Rect m_viewPort;
-	Size2D m_levelSize;
-	float m_scale;
-	float m_moveUnit;
-	float m_scaleUnit;
+	Rect viewPort;
+	Size2D levelSize;
+	float scale;
+	float moveUnit;
+	float scaleUnit;
 
 	void limitValues();
 };

@@ -13,16 +13,19 @@ public:
 
 	static SceneManager* instance();
 
-	void startMenu();
-	void startGame();
+	Game game[3];
+
+	void init();
 
 	void goToLevel(int levelNumber);
 
 	void destroy();
+
+	// Vriables
 	int maxlevels;
 	int currentLevel;
-	Game game[4];
-	bool endgamescreen;
+
+	bool gameOver;
 
 private:
 	static SceneManager* _instance;

@@ -69,10 +69,10 @@ void Renderer::drawRect(const Rect& r, const Colour& c) {
 	Rect tRect = cameraTransform(r);
 	SDL_SetRenderDrawColor(sdl_renderer, c.r, c.g, c.b, c.a);
 	SDL_Rect sr;
-	sr.h = (int)r.size.h;
-	sr.w = (int)r.size.w;
-	sr.x = (int)r.pos.x;
-	sr.y = (int)r.pos.y;
+	sr.h = (int)tRect.size.h;
+	sr.w = (int)tRect.size.w;
+	sr.x = (int)tRect.pos.x;
+	sr.y = (int)tRect.pos.y;
 	SDL_RenderFillRect(sdl_renderer, &sr);
 
 }
@@ -80,7 +80,7 @@ void Renderer::drawRect(const Rect& r, const Colour& c) {
 //draw a rectin world coordinates
 void Renderer::drawWorldRect(const Rect &r, const Colour &c)
 {
-	drawRect(worldToScreen(r),c);
+	drawRect(r,c);
 }
 
 void Renderer::present() { //swap buffers
