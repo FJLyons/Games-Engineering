@@ -13,17 +13,18 @@ public:
 	void MoveUp();
 	void MoveDown();
 
-	void increaseScale();
-	void decreaseScale();
+	void scaleUp();
+	void scaleDown();
 
 	void setLevelSize(Size2D size);
 
 private:
 	Rect viewPort;
 	Size2D levelSize;
+
 	float scale;
-	float moveUnit;
-	float scaleUnit;
+	float moveBy;
+	float scaleBy;
 
 	void limitValues();
 };

@@ -188,10 +188,10 @@ void Game::onEvent(EventListener::Event evt)
 		camera->MoveDown();
 		break;
 	case(EventListener::Event::ZOOM_IN):
-		camera->increaseScale();
+		camera->scaleUp();
 		break;
 	case(EventListener::Event::ZOOM_OUT):
-		camera->decreaseScale();
+		camera->scaleDown();
 		break;
 	}
 }

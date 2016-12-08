@@ -1,7 +1,12 @@
 #include "stdafx.h"
 #include "Camera2D.h"
 
-Camera2D::Camera2D(Rect viewPort, float initScale) : viewPort(viewPort), scale(initScale), scaleUnit(1.1f), moveUnit(30), levelSize(Size2D(1, 1))
+Camera2D::Camera2D(Rect viewPort, float initScale) : 
+	viewPort(viewPort), 
+	scale(initScale), 
+	scaleBy(1.1f), 
+	moveBy(30), 
+	levelSize(Size2D(1, 1))
 {
 }
 
@@ -17,55 +22,54 @@ float Camera2D::getScale()
 
 void Camera2D::MoveLeft()
 {
-	viewPort.pos.x -= moveUnit * scale;
+	viewPort.pos.x -= moveBy * scale;
 	limitValues();
 }
 
 void Camera2D::MoveRight()
 {
-	viewPort.pos.x += moveUnit * scale;
+	viewPort.pos.x += moveBy * scale;
 	limitValues();
 }
 
 void Camera2D::MoveUp()
 {
-	viewPort.pos.y -= moveUnit * scale;
+	viewPort.pos.y -= moveBy * scale;
 	limitValues();
 }
 
 void Camera2D::MoveDown()
 {
-	viewPort.pos.y += moveUnit * scale;
+	viewPort.pos.y += moveBy * scale;
 	limitValues();
 }
 
-void Camera2D::increaseScale()
+void Camera2D::scaleUp()
 {
 	Point2D centre(viewPort.getCentreCopy());
 	centre = centre / scale;
 
-	scale *= scaleUnit;
-
+	scale *= scaleBy;
 	centre = centre * scale;
+
 	viewPort.pos.x = centre.x - (viewPort.size.w / 2);
 	viewPort.pos.y = centre.y - (viewPort.size.h / 2);
+
 	limitValues();
 }
 
-void Camera2D::decreaseScale()
+void Camera2D::scaleDown()
 {
 	Point2D centre(viewPort.getCentreCopy());
 	centre = centre / scale;
 
-	scale /= scaleUnit;
-	if (scale < 1)
-	{
-		scale = 1;
-	}
-
+	scale /= scaleBy;
+	if (scale < 1) { scale = 1; }
 	centre = centre * scale;
+
 	viewPort.pos.x = centre.x - (viewPort.size.w / 2);
 	viewPort.pos.y = centre.y - (viewPort.size.h / 2);
+
 	limitValues();
 }
 
@@ -76,19 +80,19 @@ void Camera2D::setLevelSize(Size2D size)
 
 void Camera2D::limitValues()
 {
-	if (viewPort.pos.x > levelSize.w * scale - viewPort.size.w)
+	if (viewPort.pos.x > levelSize.w * scale - viewPort.size.w) // Right
 	{
-		viewPort.pos.x = levelSize.w * scale - viewPort.size.w;
+		viewPort.pos.x = levelSize.w * scale - viewPort.size.w; 
 	}
-	if (viewPort.pos.x < 0)
+	if (viewPort.pos.x < 0) // Left
 	{
 		viewPort.pos.x = 0;
 	}
-	if (viewPort.pos.y > levelSize.h * scale - viewPort.size.h)
+	if (viewPort.pos.y > levelSize.h * scale - viewPort.size.h) // Bottom
 	{
 		viewPort.pos.y = levelSize.h * scale - viewPort.size.h;
 	}
-	if (viewPort.pos.y < 0)
+	if (viewPort.pos.y < 0) // Top
 	{
 		viewPort.pos.y = 0;
 	}

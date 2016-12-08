@@ -89,8 +89,8 @@ public:
 
 					// Added Cost for surrounding tile
 					int totalCost = 0;
-					if (x == 0 || y == 0) { totalCost = currentTile->G + 10; } // Straight
-					else { totalCost = currentTile->G + 14; } // diagonal
+					if (x == 0 || y == 0) { totalCost = currentTile->G + 1.0f; } // Straight
+					else { totalCost = currentTile->G + 1.4f; } // diagonal
 					
 					// Create new surrounding tile for testing
 					Tile* surroundingTile = nullptr;
@@ -110,7 +110,7 @@ public:
 						surroundingTile->G = totalCost; // distance to start
 
 						int diff = abs(surroundingTile->xPos - endTile->xPos) + abs(surroundingTile->yPos - endTile->yPos);
-						surroundingTile->H = 10 * diff; // distance to end
+						surroundingTile->H = diff; // distance to end
 
 						surroundingTile->F = surroundingTile->G + surroundingTile->H; // total distance
 
@@ -127,7 +127,7 @@ public:
 						surroundingTile->G = totalCost;
 
 						int diff = abs(surroundingTile->xPos - endTile->xPos) + abs(surroundingTile->yPos - endTile->yPos); // distance to start
-						surroundingTile->H = 10 * diff; // distance to end
+						surroundingTile->H = diff; // distance to end
 
 						surroundingTile->F = surroundingTile->G + surroundingTile->H; // total distance
 					}					
@@ -148,7 +148,7 @@ public:
 		closedList.clear();
 
 		return finalPath;
-	}						// done
+	}	// done
 };
 
 //surroundingTile->G = abs(surroundingTile->xPos - startTile->xPos) + abs(surroundingTile->yPos - startTile->yPos);	// distance to start
