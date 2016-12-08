@@ -18,7 +18,7 @@ public:
 		PATH
 	};
 
-	Tile(Rect r, Type t, int x, int y, int w);
+	Tile(Rect r, Type t, int x, int y);
 	Tile(int x, int y);
 	~Tile();
 
@@ -39,10 +39,9 @@ public:
 	void setPath();
 
 	int getSize();
+	int amount = 0;
 
 	int xPos, yPos;
-	
-	float travelCost;
 
 protected:
 	Rect _rect;
@@ -50,9 +49,9 @@ protected:
 	Type _type;
 
 public:
-	int F;
-	int G = 0;
-	int H;
+	int FunctionCost;
+	int GraphCost;
+	int HeuristicCost;
 
 	Tile* parentTile;
 };

@@ -14,6 +14,7 @@ const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 Game::Game()
 {
 	quit = false;
+	pathfinder = new Pathfinder();
 }
 
 Game::~Game()
@@ -46,7 +47,7 @@ bool Game::init(int levelNumber) {
 	else if (levelNumber == 2)
 	{
 		startTile = tiles[0][0];
-		endTile = tiles[9][9];
+		endTile = tiles[499][499];
 		scale = 1000.0f/30.0f;
 		levelSize = 1000;
 	}

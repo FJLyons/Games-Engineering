@@ -18,6 +18,21 @@ class Pathfinder
 public:
 
 	typedef vector<Tile*> tileList;
+	enum ListType
+	{
+		ZERO,
+		OPEN,
+		CLOSED,
+	};
+
+	tileList openList;
+	tileList finalPath;
+	vector<vector<int>> listMap;
+
+	int heuristic(Tile* current, Tile* end)
+	{
+		return abs(abs(current->xPos - end->xPos) + abs(current->yPos - end->yPos));
+	}
 
 	bool isInList(tileList list, int x, int y)
 	{
@@ -32,31 +47,28 @@ public:
 		return false;
 	}
 
+	struct CompareNodes
+	{
+		bool operator() (Tile* lhs, Tile* rhs)
+		{
+			return rhs->FunctionCost > lhs->FunctionCost;
+		}
+	};
 
 	tileList Find(Tile* startTile, Tile* endTile, std::vector<std::vector<Tile*>>& tiles)
 	{
 		Tile* currentTile = nullptr;
-
-		tileList closedList, openList;
-
+		resetLists(tiles);
 		openList.push_back(startTile);
 
 		// If open list empty there is no solution
 		while (!openList.empty())
 		{
 			// current tile = best valued tile
+			sort(openList.begin(), openList.end(), CompareNodes());
 			currentTile = *openList.begin();
 
 			// Find best node in the open list
-			for (int i = 0; i < openList.size(); i++)
-			{
-				if (openList[i]->F <= currentTile->F)
-				{
-					currentTile = openList[i];
-					std::cout << "X:\t" << currentTile->xPos 
-					<< "\t" << "Y:\t" << currentTile->yPos << std::endl;
-				}
-			}
 
 			// If target reached
 			if (currentTile->xPos == endTile->xPos && currentTile->yPos == endTile->yPos)
@@ -65,91 +77,126 @@ public:
 			}
 
 			// Add best tile to closed list, delete it from the open list
-			closedList.push_back(currentTile);
+			listMap[currentTile->xPos][currentTile->yPos] = ListType::CLOSED;
 			openList.erase(std::find(openList.begin(), openList.end(), currentTile));
 
 			// Get surrounding nodes
-			for (int x = currentTile->xPos - 1; x <= currentTile->xPos + 1; x++)
+			for (int i = 0; i < 4; i++)
 			{
-				for (int y = currentTile->yPos - 1; y <= currentTile->yPos + 1; y++)
+				int x = 0;
+				int y = 0;
+				if (i == 0) { x = currentTile->xPos - 1; y = currentTile->yPos; } // left
+				else if (i == 1) { x = currentTile->xPos + 1; y = currentTile->yPos; } // right
+				else if (i == 2) { x = currentTile->xPos; y = currentTile->yPos - 1; } // up
+				else if (i == 3) { x = currentTile->xPos; y = currentTile->yPos + 1; } // down
+
+				// Check to see if x/y are in range of map and not a wall
+				bool isInXRange = (x >= 0 && x < tiles.size());
+				bool isInYRange = (y >= 0 && y < tiles[0].size());
+				if (!isInXRange || !isInYRange || tiles[x][y]->getType() == Tile::Type::WALL)
 				{
-					// If tile is in closed list, skip it
-					if (isInList(closedList, x, y))
-					{
-						continue;
-					}
+					continue;
+				}
 
-					// Check to see if x/y are in range of map
-					bool isInXRange = (x >= 0 && x < tiles.size());
-					bool isInYRange = (y >= 0 && y < tiles[0].size());
-					if (!isInXRange || !isInYRange || tiles[x][y]->getType() == Tile::Type::WALL)
-					{
-						continue;
-					}
+				// If tile is in closed list, skip it
+				if (listMap[x][y] == ListType::CLOSED)
+				{
+					continue;
+				}
 
-					// Added Cost for surrounding tile
-					int totalCost = 0;
-					if (x == 0 || y == 0) { totalCost = currentTile->G + 1.0f; } // Straight
-					else { totalCost = currentTile->G + 1.4f; } // diagonal
+				// Added Cost for surrounding tile
+				int totalCost = 0;
+				totalCost = currentTile->GraphCost + 1; // Straight to next tile, 1 away
+
+				// Create new surrounding tile for testing
+				Tile* surroundingTile = nullptr;
+				for (int j = 0; j < openList.size(); j++)
+				{
+					// if there is already a tile in the open list, reset it to this tile
+					if (openList[j]->xPos == x && openList[j]->yPos == y)
+					{
+						surroundingTile = openList[j];
+					}
+				}
+
+				// If tile is new to the open list
+				if (surroundingTile == nullptr)
+				{
+					surroundingTile = tiles[x][y];
+
+					surroundingTile->GraphCost = totalCost; // Distance to start
+
+					surroundingTile->HeuristicCost = heuristic(surroundingTile, endTile);// Distance to end
+
+					surroundingTile->FunctionCost = surroundingTile->GraphCost + surroundingTile->HeuristicCost; // Total distance
+
+					surroundingTile->parentTile = currentTile;
+
+
+					listMap[surroundingTile->xPos][surroundingTile->yPos] = ListType::OPEN;
+					openList.push_back(surroundingTile);
+				}
+
+				// Change G score and parent of surrounding tile
+				else if (totalCost <= surroundingTile->GraphCost)
+				{
+					surroundingTile->GraphCost = totalCost; // Distance to start
+
+					surroundingTile->HeuristicCost = heuristic(surroundingTile, endTile); // Distance to end
 					
-					// Create new surrounding tile for testing
-					Tile* surroundingTile = nullptr;
-					for (int i = 0; i < openList.size(); i++)
-					{
-						// if there is already a tile in the open list, reset it to this tile
-						if (openList[i]->xPos == x && openList[i]->yPos == y)
-						{
-							surroundingTile = openList[i];
-						}
-					}
+					surroundingTile->FunctionCost = surroundingTile->GraphCost + surroundingTile->HeuristicCost; // Total distance
 
-					// If tile is new to the open list
-					if (surroundingTile == nullptr)
-					{
-						surroundingTile = tiles[x][y];
-						surroundingTile->G = totalCost; // distance to start
-
-						int diff = abs(surroundingTile->xPos - endTile->xPos) + abs(surroundingTile->yPos - endTile->yPos);
-						surroundingTile->H = diff; // distance to end
-
-						surroundingTile->F = surroundingTile->G + surroundingTile->H; // total distance
-
-						surroundingTile->parentTile = currentTile;
-
-						openList.push_back(surroundingTile);
-					}
-
-					// Change G score and parent of surrounding tile
-					else if (totalCost < surroundingTile->G)
-					{
-						surroundingTile->parentTile = currentTile;
-
-						surroundingTile->G = totalCost;
-
-						int diff = abs(surroundingTile->xPos - endTile->xPos) + abs(surroundingTile->yPos - endTile->yPos); // distance to start
-						surroundingTile->H = diff; // distance to end
-
-						surroundingTile->F = surroundingTile->G + surroundingTile->H; // total distance
-					}					
-				}			// y complete
-			}				// x complete
+					surroundingTile->parentTile = currentTile;
+				}
+			}
 		}					// open list is empty
 
 		// Produce path
-		tileList finalPath;
 		while (currentTile != nullptr)
 		{
 			currentTile->setPath();
 			finalPath.push_back(currentTile);
 			currentTile = currentTile->parentTile;
 		}
-
-		openList.clear();
-		closedList.clear();
-
+		
 		return finalPath;
-	}	// done
+	} // A Star
+
+	void resetLists(std::vector<std::vector<Tile*>>& tiles)
+	{
+		listMap.erase(listMap.begin(), listMap.end());
+		finalPath.erase(finalPath.begin(), finalPath.end());
+		openList.erase(openList.begin(), openList.end());
+		setupListMap(tiles);
+	}
+
+
+
+	void setupListMap(std::vector<std::vector<Tile*>>& tiles)
+	{
+		int tileMapSize = tiles.size();
+
+		for (int i = 0; i < tileMapSize; i++)
+		{
+			listMap.push_back(vector<int>());
+
+			for (int j = 0; j < tileMapSize; j++)
+			{
+				listMap[i].push_back(ListType::ZERO);
+			}
+		}
+	}
 };
+
+
+
+
+
+
+
+
+
+
 
 //surroundingTile->G = abs(surroundingTile->xPos - startTile->xPos) + abs(surroundingTile->yPos - startTile->yPos);	// distance to start
 //surroundingTile->H = abs(surroundingTile->xPos - endTile->xPos) + abs(surroundingTile->yPos - endTile->yPos);		// distance to end

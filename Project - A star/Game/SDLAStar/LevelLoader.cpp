@@ -80,7 +80,7 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 				float yPos = y * height;
 				
 				// Tile
-				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOORE, x, y, 0);
+				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOORE, x, y);
 
 				// Set floor type for checkerboard
 				if (isEven == false)
@@ -169,7 +169,7 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 				float xPos = 0 + (x * width);
 				float yPos = 0 + (y * height);
 
-				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOORE, x, y, 0);
+				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOORE, x, y);
 
 				if (isEven == false)
 				{
@@ -255,7 +255,7 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 				float xPos = 0 + (x * width);
 				float yPos = 0 + (y * height);
 
-				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOORE, x, y, 0);
+				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOORE, x, y);
 
 				if (isEven == false)
 				{
