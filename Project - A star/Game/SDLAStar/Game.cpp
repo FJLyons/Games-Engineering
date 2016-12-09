@@ -24,7 +24,6 @@ Game::~Game()
 bool Game::init(int levelNumber) {	
 	// Set Window Size
 	Size2D winSize(2000,2000);
-	srand(LTimer::gameTime());
 
 	// Objects
 	tiles = LevelLoader::instance()->LoadLevel(levelNumber);
@@ -33,21 +32,21 @@ bool Game::init(int levelNumber) {
 	if (levelNumber == 0)
 	{
 		startTile = tiles[0][0];
-		endTile = tiles[19][19];
+		endTile = tiles[29][29];
 		scale = 30.0f/30.0f;
 		levelSize = 30;
 	}
 	else if (levelNumber == 1)
 	{
 		startTile = tiles[0][0];
-		endTile = tiles[33][33];
+		endTile = tiles[99][99];
 		scale = 100.0f/30.0f;
 		levelSize = 100;
 	}
 	else if (levelNumber == 2)
 	{
 		startTile = tiles[0][0];
-		endTile = tiles[499][499];
+		endTile = tiles[999][999];
 		scale = 1000.0f/30.0f;
 		levelSize = 1000;
 	}

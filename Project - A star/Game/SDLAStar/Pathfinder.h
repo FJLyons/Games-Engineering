@@ -34,24 +34,11 @@ public:
 		return abs(abs(current->xPos - end->xPos) + abs(current->yPos - end->yPos));
 	}
 
-	bool isInList(tileList list, int x, int y)
-	{
-		for (int i = 0; i < list.size(); i++)
-		{
-			//list[i]->setSpawn();
-			if (list[i]->xPos == x && list[i]->yPos == y)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
 	struct CompareNodes
 	{
 		bool operator() (Tile* lhs, Tile* rhs)
 		{
-			return rhs->FunctionCost > lhs->FunctionCost;
+			return lhs->FunctionCost < rhs->FunctionCost;
 		}
 	};
 
@@ -67,8 +54,6 @@ public:
 			// current tile = best valued tile
 			sort(openList.begin(), openList.end(), CompareNodes());
 			currentTile = *openList.begin();
-
-			// Find best node in the open list
 
 			// If target reached
 			if (currentTile->xPos == endTile->xPos && currentTile->yPos == endTile->yPos)
@@ -110,13 +95,10 @@ public:
 
 				// Create new surrounding tile for testing
 				Tile* surroundingTile = nullptr;
-				for (int j = 0; j < openList.size(); j++)
+				
+				if (listMap[x][y] == ListType::OPEN)
 				{
-					// if there is already a tile in the open list, reset it to this tile
-					if (openList[j]->xPos == x && openList[j]->yPos == y)
-					{
-						surroundingTile = openList[j];
-					}
+					surroundingTile = tiles[x][y];
 				}
 
 				// If tile is new to the open list

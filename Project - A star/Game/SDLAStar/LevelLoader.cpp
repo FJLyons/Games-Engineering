@@ -52,16 +52,16 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 		float height = 2000.0f / divide;
 
 		// Walls
-		const int borderWallAmount = 1;
-		int borderWall = rand() % 10 + 9;
-		int borderLength = rand() % 15 + 4;
+		const int borderWallAmount = 1; // Amount of walls touching border
+		int borderWall = rand() % 10 + 9; // Area for border to spawn - center 3rd
+		int borderLength = rand() % 15 + 4; // min length = 5 - max length = 20
 
-		int innerWall[2];
-		int innerLength[2];
-		for (int wallNumber = 0; wallNumber < 2; wallNumber++)
+		int innerWall[2]; // Amount of walls not touching sides
+		int innerLength[2]; // length of walls
+		for (int wallNumber = 0; wallNumber < 2; wallNumber++) // Loop through walls
 		{
-			innerWall[wallNumber] = rand() % 9 + (wallNumber * 20);
-			innerLength[wallNumber] = rand() % 9 + 4;
+			innerWall[wallNumber] = rand() % 9 + (wallNumber * 20); // Area for inner walls - first and last 3rd
+			innerLength[wallNumber] = rand() % 3 + 2; // min distance to wall = 3 - max distance to wall = 6
 		}
 
 		// Loop through Vector
@@ -95,7 +95,6 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 
 				//// Create Spawn
 				//if (y >= 13 && y <= 26 && x >= 18 && x <= 27) { temp->setSpawn(); }
-
 				//// Create Goal
 				//if (y >= 9 && y <= 19 && x >= 2 && x <= 10) { temp->setGoal(); }
 
@@ -132,10 +131,8 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 		int borderLength[borderWallAmount];
 		for (int wallNumber = 0; wallNumber < borderWallAmount; wallNumber++)
 		{
-			borderWall[wallNumber] = rand() % 30 + 15  + (wallNumber * 30);
-			borderLength[wallNumber] = rand() % 45 + 15;
-			if (borderWall[wallNumber] == borderWall[wallNumber - 1])
-				borderWall[wallNumber] += 2;
+			borderWall[wallNumber] = rand() % 30 + 14  + (wallNumber * 30); // Area for border to spawn - second and fourth 5th
+			borderLength[wallNumber] = rand() % 60 + 14; // min length = 15 - max length = 75
 		}
 
 		const int innerWallAmount = 4;
@@ -143,18 +140,17 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 		int innerLength[innerWallAmount];
 		for (int wallNumber = 0; wallNumber < innerWallAmount; wallNumber++)
 		{
-			innerWall[wallNumber] = rand() % 25 + (wallNumber * 25);
-			innerLength[wallNumber] = rand() % 30 + 15;
-			if (innerWall[wallNumber] == innerWall[wallNumber - 1])
-				innerWall[wallNumber] += 2;
+			innerWall[wallNumber] = rand() % 25 + (wallNumber * 25); // Area for inner walls - every quarter
+			innerLength[wallNumber] = rand() % 10 + 9; // min distance to wall = 10 - max distance to wall = 20
 		}
 
+		// Stop walls placing on each other
 		for (int wallNumberX = 0; wallNumberX < borderWallAmount; wallNumberX++)
 		{
 			for (int wallNumberY = 0; wallNumberY < innerWallAmount; wallNumberY++)
 			{
 				if (borderWall[wallNumberX] == innerWall[wallNumberY])
-					innerWall[wallNumberY] += 2;
+					innerWall[wallNumberY] += 5;
 			}
 		}
 
@@ -218,10 +214,8 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 		int borderLength[borderWallAmount];
 		for (int wallNumber = 0; wallNumber < borderWallAmount; wallNumber++)
 		{
-			borderWall[wallNumber] = rand() % 200 + 50 + (wallNumber * 250);
-			borderLength[wallNumber] = rand() % 750 + 100;
-			if (borderWall[wallNumber] == borderWall[wallNumber - 1])
-				borderWall[wallNumber] += 10;
+			borderWall[wallNumber] = rand() % 200 + 50 + (wallNumber * 250); // Area for border to spawn - every 4th
+			borderLength[wallNumber] = rand() % 750 + 100; // min length = 100 - max length = 850
 		}
 
 		const int innerWallAmount = 14;
@@ -229,12 +223,11 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 		int innerLength[innerWallAmount];
 		for (int wallNumber = 0; wallNumber < innerWallAmount; wallNumber++)
 		{
-			innerWall[wallNumber] = rand() % 65 + (wallNumber * 65);
-			innerLength[wallNumber] = rand() % 400 + 95;
-			if (innerWall[wallNumber] == innerWall[wallNumber - 1])
-				innerWall[wallNumber] += 10;
+			innerWall[wallNumber] = rand() % 65 + (wallNumber * 65); // Area for inner walls - every 14th
+			innerLength[wallNumber] = rand() % 100 + 99; // min distance to wall = 100 - max distance to wall = 200
 		}
 
+		// Stop walls placing on each other
 		for (int wallNumberX = 0; wallNumberX < borderWallAmount; wallNumberX++)
 		{
 			for (int wallNumberY = 0; wallNumberY < innerWallAmount; wallNumberY++)

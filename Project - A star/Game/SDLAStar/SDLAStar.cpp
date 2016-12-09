@@ -1,6 +1,7 @@
 //  Defines the entry point for the console application.
 //
 #include "stdafx.h"
+#include <ctime>
 
 #include <iostream>
 using namespace std;
@@ -11,6 +12,8 @@ using namespace std;
 
 int main()
 {
+	srand(time(NULL));
+
 	SceneManager::instance()->init();
 
 	return 0;
