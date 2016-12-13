@@ -22,9 +22,10 @@ Renderer::Renderer():sdl_renderer(NULL)
 bool Renderer::init(const Size2D& winSize,const char* title, Camera2D* cam) 
 {
 	m_camera = cam;
-
-	int e=SDL_Init(SDL_INIT_EVERYTHING);              // Initialize SDL2
 	windowSize = winSize;
+
+	auto e = SDL_Init(SDL_INIT_EVERYTHING);              // Initialize SDL2
+	
 	if (e != 0) {
 		// problem with SDL?...
 		cout << "Could not init SDL: " << SDL_GetError() << std::endl;
@@ -33,7 +34,7 @@ bool Renderer::init(const Size2D& winSize,const char* title, Camera2D* cam)
 
 	// Create an application window with the following settings:
 	window = SDL_CreateWindow(
-		title,                  // window title
+		title,								// window title
 		SDL_WINDOWPOS_UNDEFINED,           // initial x position
 		SDL_WINDOWPOS_UNDEFINED,           // initial y position
 		(int)winSize.w,                              // width, in pixels

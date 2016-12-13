@@ -115,3 +115,9 @@ int Tile::getSize()
 {
 	return _rect.size.w;
 }
+
+
+Point2D Tile::getIndexPosition()
+{
+	return Point2D(xPos, yPos);
+}

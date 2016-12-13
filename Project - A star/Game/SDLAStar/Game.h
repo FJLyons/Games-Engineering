@@ -12,6 +12,8 @@
 
 #include "Camera2D.h"
 
+#include "Threading.h"
+
 
 /** The game objct whic manages the game loop*/
 class Game:public EventListener
@@ -22,6 +24,8 @@ class Game:public EventListener
 	std::vector<std::vector<Tile*>> tiles;
 	Tile* startTile; // enemy
 	Tile* endTile; // player
+	Tile* startTile2; // enemy
+	Tile* endTile2; // player
 
 	Camera2D * camera;
 	float scale;

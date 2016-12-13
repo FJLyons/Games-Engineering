@@ -39,9 +39,9 @@ public:
 	void setPath();
 
 	int getSize();
-	int amount = 0;
 
 	int xPos, yPos;
+	Point2D getIndexPosition();
 
 protected:
 	Rect _rect;
@@ -49,9 +49,5 @@ protected:
 	Type _type;
 
 public:
-	int FunctionCost;
-	int GraphCost;
-	int HeuristicCost;
 
-	Tile* parentTile;
 };

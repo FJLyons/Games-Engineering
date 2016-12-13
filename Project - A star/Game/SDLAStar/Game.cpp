@@ -2,6 +2,8 @@
 
 #include <iostream>
 using namespace std;
+#include <chrono>
+#include <thread>
 
 #include "LTimer.h"
 #include "Game.h"
@@ -33,6 +35,8 @@ bool Game::init(int levelNumber) {
 	{
 		startTile = tiles[0][0];
 		endTile = tiles[29][29];
+		startTile2 = tiles[29][0];
+		endTile2 = tiles[0][29];
 		scale = 30.0f/30.0f;
 		levelSize = 30;
 	}
@@ -40,6 +44,8 @@ bool Game::init(int levelNumber) {
 	{
 		startTile = tiles[0][0];
 		endTile = tiles[99][99];
+		startTile2 = tiles[99][0];
+		endTile2 = tiles[0][99];
 		scale = 100.0f/30.0f;
 		levelSize = 100;
 	}
@@ -47,6 +53,8 @@ bool Game::init(int levelNumber) {
 	{
 		startTile = tiles[0][0];
 		endTile = tiles[999][999];
+		startTile2 = tiles[999][0];
+		endTile2 = tiles[0][999];
 		scale = 1000.0f/30.0f;
 		levelSize = 1000;
 	}
@@ -56,13 +64,16 @@ bool Game::init(int levelNumber) {
 		endTile = tiles[19][19];
 	}
 
-	// A Star
-	pathfinder->Find(startTile, endTile, tiles);
-
 	// Camera
 	camera = new Camera2D(Rect(0, 0, winSize.w, winSize.h), scale);
 	camera->setLevelSize(Size2D(winSize.w, winSize.h));
 	renderer.setNewCamera(camera);
+
+	// A Star
+	//pathfinder->Find(startTile, endTile, tiles);
+	Threading::getInstance()->spawnWorkers();
+	Threading::getInstance()->addTask(std::bind(&Pathfinder::Find, pathfinder, startTile, endTile, tiles));
+	Threading::getInstance()->addTask(std::bind(&Pathfinder::Find, pathfinder, startTile2, endTile2, tiles));
 
 	// Time
 	lastTime = LTimer::gameTime();

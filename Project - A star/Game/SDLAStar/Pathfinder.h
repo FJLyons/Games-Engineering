@@ -18,6 +18,7 @@ class Pathfinder
 public:
 
 	typedef vector<Tile*> tileList;
+
 	enum ListType
 	{
 		ZERO,
@@ -25,155 +26,168 @@ public:
 		CLOSED,
 	};
 
-	tileList openList;
-	tileList finalPath;
-	vector<vector<int>> listMap;
+	struct TileInfo
+	{
+		int GraphCost = 10000000;
+		int HeuristicCost = 0;
+		int FunctionCost = 0;
+		int listType = ListType::ZERO;
+		Tile* parentTile = nullptr;
+	};
+
+	void initializeTileData(vector<vector<TileInfo>>* tileData, std::vector<std::vector<Tile*>>* tiles)
+	{
+		int tileMapSize = tiles->size();
+
+		for (int i = 0; i < tileMapSize; i++)
+		{
+			tileData->push_back(vector<TileInfo>());
+
+			for (int j = 0; j < tileMapSize; j++)
+			{
+				tileData->at(i).push_back(TileInfo());
+			}
+		}
+	}
 
 	int heuristic(Tile* current, Tile* end)
 	{
 		return abs(abs(current->xPos - end->xPos) + abs(current->yPos - end->yPos));
 	}
 
-	struct CompareNodes
-	{
-		bool operator() (Tile* lhs, Tile* rhs)
-		{
-			return lhs->FunctionCost < rhs->FunctionCost;
-		}
-	};
-
 	tileList Find(Tile* startTile, Tile* endTile, std::vector<std::vector<Tile*>>& tiles)
 	{
-		Tile* currentTile = nullptr;
-		resetLists(tiles);
+		tileList openList;
+		tileList finalPath;
+
+		vector<vector<TileInfo>> tileData; // map of Tile information
+		initializeTileData(&tileData, &tiles);
+
+		Point2D startTilePos = startTile->getIndexPosition();
+		TileInfo* startTileInfo = &tileData.at(startTilePos.x).at(startTilePos.y);
+
+		startTileInfo->GraphCost = 0;
+		startTileInfo->HeuristicCost = heuristic(startTile, endTile);
+		startTileInfo->FunctionCost = startTileInfo->GraphCost + startTileInfo->HeuristicCost;
+
 		openList.push_back(startTile);
 
 		// If open list empty there is no solution
 		while (!openList.empty())
 		{
 			// current tile = best valued tile
-			sort(openList.begin(), openList.end(), CompareNodes());
-			currentTile = *openList.begin();
+			//sort(openList.begin(), openList.end(), CompareNodes());
+			Tile* currentTile = openList.back();
 
+			// Tile traversal values
+			Point2D currentTilePos = Point2D(currentTile->xPos, currentTile->yPos);
+			TileInfo* currentTileInfo = &tileData[currentTilePos.x][currentTilePos.y];
+			currentTileInfo->listType = ListType::CLOSED;
+			openList.pop_back();
+			
 			// If target reached
-			if (currentTile->xPos == endTile->xPos && currentTile->yPos == endTile->yPos)
+			if (currentTile == endTile)
 			{
+				// Produce path
+				while (currentTileInfo->parentTile != nullptr)
+				{
+					finalPath.push_back(currentTile);
+					currentTile->setPath();
+					currentTile = currentTileInfo->parentTile;
+					currentTilePos = currentTile->getIndexPosition();
+					currentTileInfo = &tileData[currentTilePos.x][currentTilePos.y];
+				}
 				break;
 			}
-
-			// Add best tile to closed list, delete it from the open list
-			listMap[currentTile->xPos][currentTile->yPos] = ListType::CLOSED;
-			openList.erase(std::find(openList.begin(), openList.end(), currentTile));
-
+			
 			// Get surrounding nodes
 			for (int i = 0; i < 4; i++)
 			{
 				int x = 0;
 				int y = 0;
-				if (i == 0) { x = currentTile->xPos - 1; y = currentTile->yPos; } // left
-				else if (i == 1) { x = currentTile->xPos + 1; y = currentTile->yPos; } // right
-				else if (i == 2) { x = currentTile->xPos; y = currentTile->yPos - 1; } // up
-				else if (i == 3) { x = currentTile->xPos; y = currentTile->yPos + 1; } // down
 
-				// Check to see if x/y are in range of map and not a wall
+				// Get neighbours
+				if (i == 0) { x = currentTile->xPos + 1; y = currentTile->yPos; } // right
+				else if (i == 1) { x = currentTile->xPos; y = currentTile->yPos + 1; } // down
+				else if (i == 2) { x = currentTile->xPos - 1; y = currentTile->yPos; } // left
+				else if (i == 3) { x = currentTile->xPos; y = currentTile->yPos - 1; } // up
+				
+
+				// Check to see if x/y are in range of map, and not a wall,
 				bool isInXRange = (x >= 0 && x < tiles.size());
 				bool isInYRange = (y >= 0 && y < tiles[0].size());
-				if (!isInXRange || !isInYRange || tiles[x][y]->getType() == Tile::Type::WALL)
+				if (!isInXRange || !isInYRange 
+					|| tiles[x][y]->getType() == Tile::Type::WALL)
 				{
-					continue;
-				}
-
-				// If tile is in closed list, skip it
-				if (listMap[x][y] == ListType::CLOSED)
-				{
-					continue;
+					continue; // Exit current loop
 				}
 
 				// Added Cost for surrounding tile
-				int totalCost = 0;
-				totalCost = currentTile->GraphCost + 1; // Straight to next tile, 1 away
+				int totalGCost = currentTileInfo->GraphCost + 1; // Straight to next tile, 1 away
 
 				// Create new surrounding tile for testing
-				Tile* surroundingTile = nullptr;
-				
-				if (listMap[x][y] == ListType::OPEN)
+				Tile* surroundingTile = tiles[x][y];
+				Point2D surroundingTilePos = surroundingTile->getIndexPosition();
+				TileInfo* surroundingTileInfo = &tileData[surroundingTilePos.x][surroundingTilePos.y];
+
+				if(surroundingTileInfo->listType == ListType::CLOSED)
 				{
-					surroundingTile = tiles[x][y];
-				}
-
-				// If tile is new to the open list
-				if (surroundingTile == nullptr)
-				{
-					surroundingTile = tiles[x][y];
-
-					surroundingTile->GraphCost = totalCost; // Distance to start
-
-					surroundingTile->HeuristicCost = heuristic(surroundingTile, endTile);// Distance to end
-
-					surroundingTile->FunctionCost = surroundingTile->GraphCost + surroundingTile->HeuristicCost; // Total distance
-
-					surroundingTile->parentTile = currentTile;
-
-
-					listMap[surroundingTile->xPos][surroundingTile->yPos] = ListType::OPEN;
-					openList.push_back(surroundingTile);
+					continue; // Exit current loop
 				}
 
 				// Change G score and parent of surrounding tile
-				else if (totalCost <= surroundingTile->GraphCost)
+				if (totalGCost < surroundingTileInfo->GraphCost)
 				{
-					surroundingTile->GraphCost = totalCost; // Distance to start
+					surroundingTileInfo->GraphCost = totalGCost; // Distance to start
+					surroundingTileInfo->HeuristicCost = heuristic(surroundingTile, endTile); // Distance to end					
+					surroundingTileInfo->FunctionCost = surroundingTileInfo->GraphCost + surroundingTileInfo->HeuristicCost; // Total distance
 
-					surroundingTile->HeuristicCost = heuristic(surroundingTile, endTile); // Distance to end
-					
-					surroundingTile->FunctionCost = surroundingTile->GraphCost + surroundingTile->HeuristicCost; // Total distance
+					surroundingTileInfo->parentTile = currentTile;
+				}
 
-					surroundingTile->parentTile = currentTile;
+				// If tile is new to the open list
+				if (surroundingTileInfo->listType != ListType::OPEN)
+				{
+					// Sorted insertion
+					// Sorted insertion
+					int insertionIndex = openList.size() - 1;
+					for (insertionIndex; insertionIndex >= 0; insertionIndex--)
+					{
+						Point2D elementPos = openList[insertionIndex]->getIndexPosition();
+						TileInfo* elementInfo = &tileData[elementPos.x][elementPos.y];
+
+						if (elementInfo->FunctionCost >= surroundingTileInfo->FunctionCost)
+						{
+							break;
+						}
+					}
+
+					if (insertionIndex < 0) { insertionIndex = 0; }
+
+					openList.insert(openList.begin() + insertionIndex, surroundingTile);
+					surroundingTileInfo->listType = ListType::OPEN;
+					surroundingTile->setEnemy();
 				}
 			}
-		}					// open list is empty
-
-		// Produce path
-		while (currentTile != nullptr)
-		{
-			currentTile->setPath();
-			finalPath.push_back(currentTile);
-			currentTile = currentTile->parentTile;
-		}
+		} // open list is empty
 		
 		return finalPath;
 	} // A Star
-
-	void resetLists(std::vector<std::vector<Tile*>>& tiles)
-	{
-		listMap.erase(listMap.begin(), listMap.end());
-		finalPath.erase(finalPath.begin(), finalPath.end());
-		openList.erase(openList.begin(), openList.end());
-		setupListMap(tiles);
-	}
-
-
-
-	void setupListMap(std::vector<std::vector<Tile*>>& tiles)
-	{
-		int tileMapSize = tiles.size();
-
-		for (int i = 0; i < tileMapSize; i++)
-		{
-			listMap.push_back(vector<int>());
-
-			for (int j = 0; j < tileMapSize; j++)
-			{
-				listMap[i].push_back(ListType::ZERO);
-			}
-		}
-	}
 };
 
 
+//struct CompareNodes
+//{
+//	bool operator() (Tile* lhs, Tile* rhs)
+//	{
+//		return lhs->FunctionCost < rhs->FunctionCost;
+//	}
+//};
 
 
-
+//// Add best tile to closed list, delete it from the open list
+//listMap[currentTile->xPos][currentTile->yPos] = ListType::CLOSED;
+//openList.erase(std::find(openList.begin(), openList.end(), currentTile));
 
 
 

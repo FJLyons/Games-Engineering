@@ -27,9 +27,6 @@ private:
 	static LevelLoader* _instance;
 	std::vector<std::vector<Tile*>> tiles;
 
-	void createBorderWalls(int size, int wall, int length, int number);
-	void createInnerWalls(int size, int wall, int range, int number);
-
 	int borderWallX[4];
 	int borderWallY[4];
 	int innerWallX[14];
