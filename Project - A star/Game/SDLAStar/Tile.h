@@ -43,11 +43,14 @@ public:
 	int xPos, yPos;
 	Point2D getIndexPosition();
 
+	void setBeingTraversed(bool b);
+	bool getBeingTraversed();
+
 protected:
 	Rect _rect;
 	Colour _col;
 	Type _type;
 
-public:
+	bool beingTraversed = false;
 
 };

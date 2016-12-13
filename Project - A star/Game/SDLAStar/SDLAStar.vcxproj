@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClInclude Include="BasicTypes.h" />
     <ClInclude Include="Camera2D.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="EventListener.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="LTimer.h" />
     <ClInclude Include="Pathfinder.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="stdafx.h" />
@@ -177,7 +179,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera2D.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SDLAStar.cpp" />
     <ClCompile Include="Game.cpp" />

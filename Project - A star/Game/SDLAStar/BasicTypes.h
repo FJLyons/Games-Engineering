@@ -61,4 +61,15 @@ public:
 	{
 		return  Point2D(this->pos.x + this->size.w / 2, this->pos.y + this->size.h / 2);
 	}
+
+	bool containsPoint(Point2D pt)
+	{
+		float x = pt.x;
+		float y = pt.y;
+		if (x >= this->pos.x && x <= this->pos.x + this->size.w &&
+			y >= this->pos.y && y <= this->pos.y + this->size.h)
+			return true;
+		else
+			return false;
+	}
 };

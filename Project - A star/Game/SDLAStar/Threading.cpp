@@ -3,7 +3,7 @@
 
 Threading * Threading::_instance = nullptr; // Create singleton
 
-Threading::Threading() : semaphoreTask(SDL_CreateSemaphore(0)), mutexLock(SDL_CreateMutex())
+Threading::Threading() : semaphoreTaskAvailable(SDL_CreateSemaphore(0)), mutexLock(SDL_CreateMutex())
 {
 }
 
@@ -26,9 +26,9 @@ SDL_mutex * Threading::getLock()
 	return mutexLock;
 }
 
-SDL_sem * Threading::getTask()
+SDL_sem * Threading::getTaskAvailable()
 {
-	return semaphoreTask;
+	return semaphoreTaskAvailable;
 }
 
 std::function<void()> Threading::findPaths()
@@ -53,7 +53,7 @@ void Threading::addTask(std::function<void()> function)
 	paths.push_back(function);
 	SDL_UnlockMutex(mutexLock);//
 
-	SDL_SemPost(semaphoreTask);
+	SDL_SemPost(semaphoreTaskAvailable);
 }
 
 void Threading::spawnWorkers()
@@ -62,6 +62,6 @@ void Threading::spawnWorkers()
 
 	for (int i = 0; i < numWorkers; i++)
 	{
-		processThreadPool.push_back(SDL_CreateThread(worker, "Generic Worker", (void*)NULL));
+		processThreadPool.push_back(SDL_CreateThread(worker, "Enemy Agent", (void*)NULL));
 	}
 }

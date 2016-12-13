@@ -33,30 +33,42 @@ bool Game::init(int levelNumber) {
 	// Set Up Each Level
 	if (levelNumber == 0)
 	{
-		startTile = tiles[0][0];
-		endTile = tiles[29][29];
-		startTile2 = tiles[29][0];
-		endTile2 = tiles[0][29];
 		scale = 30.0f/30.0f;
 		levelSize = 30;
+
+		endTile = tiles[rand() % 10][rand() % 10 + 10];
+		player = new Player(endTile);
+		for (int i = 0; i < 1; i++)
+		{
+			startTile = tiles[rand() % 10 + 20][rand() % 10 + 10];
+			enemies.push_back(new Enemy(startTile));
+		}
 	}
 	else if (levelNumber == 1)
 	{
-		startTile = tiles[0][0];
-		endTile = tiles[99][99];
-		startTile2 = tiles[99][0];
-		endTile2 = tiles[0][99];
 		scale = 100.0f/30.0f;
 		levelSize = 100;
+
+		endTile = tiles[rand() % 33][rand() % 33 + 33];
+		player = new Player(endTile);
+		for (int i = 0; i < 1; i++)
+		{
+			startTile = tiles[rand() % 33 + 66][rand() % 33 + 33];
+			enemies.push_back(new Enemy(startTile));
+		}
 	}
 	else if (levelNumber == 2)
 	{
-		startTile = tiles[0][0];
-		endTile = tiles[999][999];
-		startTile2 = tiles[999][0];
-		endTile2 = tiles[0][999];
 		scale = 1000.0f/30.0f;
 		levelSize = 1000;
+
+		endTile = tiles[rand() % 333][rand() % 333 + 333];
+		player = new Player(endTile);
+		for (int i = 0; i < 1; i++)
+		{
+			startTile = tiles[rand() % 333 + 666][rand() % 333 + 333];
+			enemies.push_back(new Enemy(startTile));
+		}
 	}
 	else
 	{
@@ -72,8 +84,16 @@ bool Game::init(int levelNumber) {
 	// A Star
 	//pathfinder->Find(startTile, endTile, tiles);
 	Threading::getInstance()->spawnWorkers();
-	Threading::getInstance()->addTask(std::bind(&Pathfinder::Find, pathfinder, startTile, endTile, tiles));
-	Threading::getInstance()->addTask(std::bind(&Pathfinder::Find, pathfinder, startTile2, endTile2, tiles));
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		Threading::getInstance()->addTask(std::bind( // Bind function for threading
+			&Pathfinder::Find, // Function to bind
+			pathfinder, // Class object for function
+			enemies[i]->currentTile, // Start position for A star
+			player->currentTile, // End position for A star
+			tiles // tile map
+		));
+	}
 
 	// Time
 	lastTime = LTimer::gameTime();
@@ -106,6 +126,13 @@ void Game::update()
 
 	//save the curent time for next frame
 	lastTime = currentTime;
+
+	//for (auto& enemy : enemies)
+	//{
+	//	enemy->Update(deltaTime);
+	//}
+
+	//player->Update(deltaTime);
 }
 
 void Game::render()
@@ -128,6 +155,19 @@ void Game::render()
 				tilesDrawn++;
 			}
 		}
+	}
+
+	for (auto& enemy : enemies)
+	{
+		if (camPos.containsPoint(enemy->getRect().pos))
+		{
+			enemy->Render(renderer);
+		}
+	}
+
+	if (camPos.containsPoint(player->getRect().pos))
+	{
+		player->Render(renderer);
 	}
 
 	//cout << "Tiles drawn = " << tilesDrawn << endl;
@@ -220,6 +260,16 @@ void Game::destroy()
 	}
 	tiles.clear();
 	tiles.shrink_to_fit();
-	tiles.clear();
+
+	for (std::vector< Enemy* >::iterator it = enemies.begin(); it != enemies.end(); ++it)
+	{
+		delete *it;
+	}
+	enemies.clear();
+	enemies.shrink_to_fit();
+
+	delete player;
+
+
 	renderer.destroy();
 }

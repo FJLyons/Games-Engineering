@@ -99,7 +99,14 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 				//if (y >= 9 && y <= 19 && x >= 2 && x <= 10) { temp->setGoal(); }
 
 				// Create walls
-				if(x == borderWall && y >= borderLength){ temp->setWall(); }
+				if(x == borderWall && y >= borderLength) {  temp->setWall();  }
+				//else if (x == borderWall && y == borderLength - 1) 
+				//{ 
+				//	waypoints[x].push_back(temp); 
+				//}
+
+				
+
 				for (int wallNumber = 0; wallNumber < 2; wallNumber++)
 				{
 					if (x == innerWall[wallNumber] && 
@@ -284,4 +291,24 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 
 		return tiles;
 	}
+}
+
+void LevelLoader::addWaypoints()
+{
+	//auto p_path = Pathfinder::Find(this, m_enemySpawn.front(), m_playerPath.front());
+	//auto path = *p_path;
+	//delete p_path;
+	//int tiles = 0;
+	//for (auto& tile : path)
+	//{
+	//	tiles++;
+	//	if (tiles % 20 == 1)
+	//	{
+	//		waypoints.push_back(tile); // every 10 tiles is a waypoint
+	//	}
+	//	if (tiles > path.size() - (path.size() / 10)) //ignore last 10 percent of tiles
+	//	{
+	//		break;
+	//	}
+	//}
 }

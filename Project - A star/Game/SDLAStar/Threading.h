@@ -15,7 +15,7 @@ public:
 public:
 	static Threading * getInstance();
 	SDL_mutex * getLock();
-	SDL_sem * getTask();
+	SDL_sem * getTaskAvailable();
 
 	std::function<void()> findPaths();
 
@@ -26,7 +26,7 @@ public:
 private:
 	static Threading * _instance;
 	SDL_mutex* mutexLock;
-	SDL_sem* semaphoreTask;
+	SDL_sem* semaphoreTaskAvailable;
 
 	std::deque<std::function<void()>> paths;
 
@@ -38,7 +38,7 @@ static int worker(void* ptr)
 	srand(time(NULL));
 	Threading* threading = Threading::getInstance();
 	SDL_mutex* mutlock = threading->getLock();
-	SDL_sem* semtask = threading->getTask();
+	SDL_sem* semtask = threading->getTaskAvailable();
 
 	while (true)
 	{

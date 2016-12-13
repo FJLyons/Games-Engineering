@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "Tile.h"
+#include "Pathfinder.h"
 
 class LevelLoader
 {
@@ -23,9 +24,12 @@ public:
 
 	bool isEven = false;
 
+	void addWaypoints();
+
 private:
 	static LevelLoader* _instance;
 	std::vector<std::vector<Tile*>> tiles;
+	std::vector<std::vector<Tile*>> waypoints;
 
 	int borderWallX[4];
 	int borderWallY[4];

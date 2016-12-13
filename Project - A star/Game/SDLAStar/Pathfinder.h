@@ -10,6 +10,7 @@
 
 #include "Tile.h"
 
+//class Enemy;
 
 using namespace std;
 
@@ -76,7 +77,6 @@ public:
 		while (!openList.empty())
 		{
 			// current tile = best valued tile
-			//sort(openList.begin(), openList.end(), CompareNodes());
 			Tile* currentTile = openList.back();
 
 			// Tile traversal values
@@ -92,6 +92,8 @@ public:
 				while (currentTileInfo->parentTile != nullptr)
 				{
 					finalPath.push_back(currentTile);
+//					enemy->currentPath.push_back(currentTile);
+
 					currentTile->setPath();
 					currentTile = currentTileInfo->parentTile;
 					currentTilePos = currentTile->getIndexPosition();
@@ -150,23 +152,23 @@ public:
 				{
 					// Sorted insertion
 					// Sorted insertion
-					int insertionIndex = openList.size() - 1;
-					for (insertionIndex; insertionIndex >= 0; insertionIndex--)
+					int sortIndex = openList.size() - 1;
+					for (sortIndex; sortIndex >= 0; sortIndex--)
 					{
-						Point2D elementPos = openList[insertionIndex]->getIndexPosition();
-						TileInfo* elementInfo = &tileData[elementPos.x][elementPos.y];
+						Point2D sortPos = openList[sortIndex]->getIndexPosition();
+						TileInfo* sortInfo = &tileData[sortPos.x][sortPos.y];
 
-						if (elementInfo->FunctionCost >= surroundingTileInfo->FunctionCost)
+						if (sortInfo->FunctionCost >= surroundingTileInfo->FunctionCost)
 						{
 							break;
 						}
 					}
 
-					if (insertionIndex < 0) { insertionIndex = 0; }
+					if (sortIndex < 0) { sortIndex = 0; }
 
-					openList.insert(openList.begin() + insertionIndex, surroundingTile);
+					openList.insert(openList.begin() + sortIndex, surroundingTile);
 					surroundingTileInfo->listType = ListType::OPEN;
-					surroundingTile->setEnemy();
+					//surroundingTile->setEnemy();
 				}
 			}
 		} // open list is empty
@@ -190,6 +192,7 @@ public:
 //openList.erase(std::find(openList.begin(), openList.end(), currentTile));
 
 
+//sort(openList.begin(), openList.end(), CompareNodes());
 
 
 

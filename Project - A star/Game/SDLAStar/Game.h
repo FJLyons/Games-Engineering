@@ -14,6 +14,9 @@
 
 #include "Threading.h"
 
+#include "Enemy.h"
+#include "Player.h"
+
 
 /** The game objct whic manages the game loop*/
 class Game:public EventListener
@@ -26,6 +29,11 @@ class Game:public EventListener
 	Tile* endTile; // player
 	Tile* startTile2; // enemy
 	Tile* endTile2; // player
+
+
+	vector<Tile*> waypoints;
+	vector<Enemy*> enemies;
+	Player * player;
 
 	Camera2D * camera;
 	float scale;

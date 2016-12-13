@@ -121,3 +121,13 @@ Point2D Tile::getIndexPosition()
 {
 	return Point2D(xPos, yPos);
 }
+
+void Tile::setBeingTraversed(bool b)
+{
+	beingTraversed = b;
+}
+
+bool Tile::getBeingTraversed()
+{
+	return beingTraversed;
+}
