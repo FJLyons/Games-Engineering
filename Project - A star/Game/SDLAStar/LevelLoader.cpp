@@ -92,12 +92,7 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 				{
 					isEven = false;
 				}
-
-				//// Create Spawn
-				//if (y >= 13 && y <= 26 && x >= 18 && x <= 27) { temp->setSpawn(); }
-				//// Create Goal
-				//if (y >= 9 && y <= 19 && x >= 2 && x <= 10) { temp->setGoal(); }
-
+				
 				// Create walls
 				if(x == borderWall && y >= borderLength) {  temp->setWall();  }
 				//else if (x == borderWall && y == borderLength - 1) 

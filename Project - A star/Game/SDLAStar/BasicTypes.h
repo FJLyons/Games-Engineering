@@ -73,3 +73,14 @@ public:
 			return false;
 	}
 };
+
+class Vector2f {
+public:
+	Vector2f(float _x, float _y) : x(_x), y(_y) {}
+	Vector2f() : x(0.f), y(0.f) {}
+	Vector2f operator*(float m) { x *= m; y *= m; return *this; }
+	Vector2f operator+(const Vector2f v) { x += v.x; y += v.y; return *this; }
+	float magnitude() { return sqrt(x * x + y * y); }
+	float x;
+	float y;
+};

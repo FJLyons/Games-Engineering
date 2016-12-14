@@ -11,7 +11,7 @@ class Player : GameObject
 {
 public:
 	//Player(std::vector<Tile*> path);
-	Player(Tile* tile);
+	Player(Tile* tile, std::vector<std::vector<Tile*>> tiles);
 	Player::~Player();
 
 	void Update(float dt);
@@ -20,11 +20,20 @@ public:
 	Rect getRect();
 
 	Tile* currentTile;
+	std::vector<std::vector<Tile*>> tileMap;
 
 private:
-
-	Tile* getNextTile(Tile* previousTile);
-	void traverseTile(float dt);
-
 	Rect rect;
+
+	void movePlayer(float dt);
+	void setPosition(const Vector2f v);
+
+	inline Vector2f lerp(float time, Vector2f a, Vector2f b)
+	{
+		if (time > 1.f)
+			time = 1.f;
+		return a * (1 - time) + b * time;
+	}
+
+	float elapsedTime = 0;
 };

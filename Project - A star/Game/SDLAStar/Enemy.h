@@ -14,7 +14,7 @@
 class Enemy : public GameObject
 {
 public:
-	Enemy(Tile* tile);
+	Enemy(Tile* tile, std::vector<std::vector<Tile*>> tiles);
 	~Enemy();
 
 	void Update(float dt);
@@ -22,15 +22,24 @@ public:
 	void Render(Renderer& r) override;
 	Rect getRect();
 
-	std::vector<Tile*> currentPath;
-
 	Tile* currentTile;
+	std::vector<Tile*> currentPath;
+	std::vector<std::vector<Tile*>> tileMap;
+
 
 private:
-
-	Tile* getNextTile(Tile* previousTile);
-	void traverseTile(float dt);
-
 	Rect rect;
+
+	void moveEnemy(float dt);
+	void setPosition(const Vector2f v);
+
+	inline Vector2f lerp(float time, Vector2f a, Vector2f b)
+	{
+		if (time > 1.f)
+			time = 1.f;
+		return a * (1 - time) + b * time;
+	}
+
+	float elapsedTime = 0;
 };
 

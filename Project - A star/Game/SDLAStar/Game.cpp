@@ -10,8 +10,8 @@ using namespace std;
 #include "SceneManager.h"
 #include "LevelLoader.h"
 
-const int SCREEN_FPS = 1000000;
-const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
+const int SCREEN_FPS = 10;
+const int SCREEN_TICKS_PER_FRAME = 100;
 
 Game::Game()
 {
@@ -37,11 +37,11 @@ bool Game::init(int levelNumber) {
 		levelSize = 30;
 
 		endTile = tiles[rand() % 10][rand() % 10 + 10];
-		player = new Player(endTile);
+		player = new Player(endTile, tiles);
 		for (int i = 0; i < 1; i++)
 		{
 			startTile = tiles[rand() % 10 + 20][rand() % 10 + 10];
-			enemies.push_back(new Enemy(startTile));
+			enemies.push_back(new Enemy(startTile, tiles));
 		}
 	}
 	else if (levelNumber == 1)
@@ -50,11 +50,11 @@ bool Game::init(int levelNumber) {
 		levelSize = 100;
 
 		endTile = tiles[rand() % 33][rand() % 33 + 33];
-		player = new Player(endTile);
+		player = new Player(endTile, tiles);
 		for (int i = 0; i < 1; i++)
 		{
 			startTile = tiles[rand() % 33 + 66][rand() % 33 + 33];
-			enemies.push_back(new Enemy(startTile));
+			enemies.push_back(new Enemy(startTile, tiles));
 		}
 	}
 	else if (levelNumber == 2)
@@ -63,11 +63,11 @@ bool Game::init(int levelNumber) {
 		levelSize = 1000;
 
 		endTile = tiles[rand() % 333][rand() % 333 + 333];
-		player = new Player(endTile);
+		player = new Player(endTile, tiles);
 		for (int i = 0; i < 1; i++)
 		{
 			startTile = tiles[rand() % 333 + 666][rand() % 333 + 333];
-			enemies.push_back(new Enemy(startTile));
+			enemies.push_back(new Enemy(startTile, tiles));
 		}
 	}
 	else
@@ -132,7 +132,7 @@ void Game::update()
 	//	enemy->Update(deltaTime);
 	//}
 
-	//player->Update(deltaTime);
+	player->Update(deltaTime);
 }
 
 void Game::render()
