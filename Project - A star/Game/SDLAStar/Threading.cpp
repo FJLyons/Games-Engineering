@@ -65,3 +65,9 @@ void Threading::spawnWorkers()
 		processThreadPool.push_back(SDL_CreateThread(worker, "Enemy Agent", (void*)NULL));
 	}
 }
+
+void Threading::clearTasks()
+{
+	processThreadPool.clear();
+	paths.clear();
+}

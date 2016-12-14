@@ -42,13 +42,12 @@ void SceneManager::goToLevel(int levelNumber)
 	if (currentLevel == maxlevels)
 	{
 		currentLevel = 0;
-		goToLevel(currentLevel);
 	}
 	else if (currentLevel != maxlevels)
 	{
 		currentLevel++;
-		goToLevel(currentLevel);
 	}
+	goToLevel(currentLevel);
 }
 
 void SceneManager::destroy()
@@ -56,7 +55,6 @@ void SceneManager::destroy()
 	for (int i = 0; i < currentLevel; i++)
 	{
 		game[i].destroy();
-
 	}
 	exit(0); // Close Application
 }

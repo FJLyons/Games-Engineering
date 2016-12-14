@@ -14,6 +14,8 @@ int main()
 {
 	srand(time(NULL));
 
+	Threading::getInstance()->spawnWorkers();
+
 	SceneManager::instance()->init();
 
 	return 0;

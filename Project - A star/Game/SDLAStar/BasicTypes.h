@@ -25,6 +25,11 @@ public:
 	{
 		return (this->x == p2.x && this->y == p2.y);
 	}
+
+	//Point2D& operator<(const Point2D& p2)
+	//{
+	//	return Point2D(x - p2.x, y - p2.y);
+	//}
 };
 
 

@@ -4,7 +4,6 @@
 #include "BasicTypes.h"
 #include "Tile.h"
 #include "Threading.h"
-#include "Pathfinder.h"
 
 #include <vector>
 
@@ -26,6 +25,12 @@ public:
 	std::vector<Tile*> currentPath;
 	std::vector<std::vector<Tile*>> tileMap;
 
+	bool needsToSearch = true;
+	bool hasFinished = false;
+
+	int currentWayPoint = 0;
+
+	SDL_semaphore* semaphore = SDL_CreateSemaphore(1);
 
 private:
 	Rect rect;

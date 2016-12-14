@@ -24,12 +24,11 @@ public:
 
 	bool isEven = false;
 
-	void addWaypoints();
+	std::vector<Tile*> waypoints;
 
 private:
 	static LevelLoader* _instance;
 	std::vector<std::vector<Tile*>> tiles;
-	std::vector<std::vector<Tile*>> waypoints;
 
 	int borderWallX[4];
 	int borderWallY[4];

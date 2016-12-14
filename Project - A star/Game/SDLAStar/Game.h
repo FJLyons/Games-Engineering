@@ -27,8 +27,7 @@ class Game:public EventListener
 	std::vector<std::vector<Tile*>> tiles;
 	Tile* startTile; // enemy
 	Tile* endTile; // player
-	Tile* startTile2; // enemy
-	Tile* endTile2; // player
+	std::vector<Tile*> wayPoints;
 
 
 	vector<Tile*> waypoints;
@@ -58,5 +57,13 @@ public:
 
 	void destroy();
 	void onEvent(EventListener::Event);
+
+	//struct CompareTiles
+	//{
+	//	bool operator() (Tile* lhs, Tile* rhs)
+	//	{
+	//		return lhs->getIndexPosition() < rhs->getIndexPosition();
+	//	}
+	//};
 };
 

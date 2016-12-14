@@ -23,6 +23,10 @@ public:
 
 	void spawnWorkers();
 
+	void clearTasks();
+
+	int workingThreads = 0;
+
 private:
 	static Threading * _instance;
 	SDL_mutex* mutexLock;
@@ -43,7 +47,9 @@ static int worker(void* ptr)
 	while (true)
 	{
 		SDL_SemWait(semtask);
+		threading->workingThreads++;
 		auto& task = threading->findPaths(); // getting the function
 		task(); // calling the function
+		threading->workingThreads--;
 	}
 }

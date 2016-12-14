@@ -36,15 +36,21 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 		{
 			tiles[x].clear();
 		}
- 		tiles.clear();
+		tiles.clear();
 		tiles.shrink_to_fit();
+	}
+
+	if (!waypoints.empty())
+	{
+		waypoints.clear();
+		waypoints.shrink_to_fit();
 	}
 
 	// Create Levels
 	if (levelNumber == 0)
 	{
 		// Number of tiles up and across
-		int size = 30; 
+		int size = 30;
 
 		// Tile Size
 		float divide = 30.0f;
@@ -56,9 +62,10 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 		int borderWall = rand() % 10 + 9; // Area for border to spawn - center 3rd
 		int borderLength = rand() % 15 + 4; // min length = 5 - max length = 20
 
-		int innerWall[2]; // Amount of walls not touching sides
-		int innerLength[2]; // length of walls
-		for (int wallNumber = 0; wallNumber < 2; wallNumber++) // Loop through walls
+		const int innerWallAmount = 2;
+		int innerWall[innerWallAmount]; // Amount of walls not touching sides
+		int innerLength[innerWallAmount]; // length of walls
+		for (int wallNumber = 0; wallNumber < innerWallAmount; wallNumber++) // Loop through walls
 		{
 			innerWall[wallNumber] = rand() % 9 + (wallNumber * 20); // Area for inner walls - first and last 3rd
 			innerLength[wallNumber] = rand() % 3 + 2; // min distance to wall = 3 - max distance to wall = 6
@@ -78,7 +85,7 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 				// Set tile position
 				float xPos = x * width;
 				float yPos = y * height;
-				
+
 				// Tile
 				Tile* temp = new Tile(Rect(xPos, yPos, width, height), Tile::Type::FLOORE, x, y);
 
@@ -92,28 +99,26 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 				{
 					isEven = false;
 				}
-				
+
 				// Create walls
-				if(x == borderWall && y >= borderLength) {  temp->setWall();  }
-				//else if (x == borderWall && y == borderLength - 1) 
-				//{ 
-				//	waypoints[x].push_back(temp); 
-				//}
+				if (x == borderWall && y >= borderLength) { temp->setWall(); }
 
-				
-
-				for (int wallNumber = 0; wallNumber < 2; wallNumber++)
+				for (int wallNumber = 0; wallNumber < innerWallAmount; wallNumber++)
 				{
-					if (x == innerWall[wallNumber] && 
-						y >= innerLength[wallNumber] && 
-						y < size - innerLength[wallNumber]) 
-					{ temp->setWall(); }
+					if (x == innerWall[wallNumber] &&
+						y >= innerLength[wallNumber] &&
+						y < size - innerLength[wallNumber])
+					{
+						temp->setWall();
+					}
 				}
 
 				// Add tile y to x vector
 				tiles[x].push_back(temp);
 			}
 		}
+
+		waypoints.push_back(tiles[borderWall][borderLength - 1]); // Get tile at top of border wall
 
 		// return vector of vector of tiles
 		return tiles;
@@ -133,7 +138,7 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 		int borderLength[borderWallAmount];
 		for (int wallNumber = 0; wallNumber < borderWallAmount; wallNumber++)
 		{
-			borderWall[wallNumber] = rand() % 30 + 14  + (wallNumber * 30); // Area for border to spawn - second and fourth 5th
+			borderWall[wallNumber] = rand() % 30 + 14 + (wallNumber * 30); // Area for border to spawn - second and fourth 5th
 			borderLength[wallNumber] = rand() % 60 + 14; // min length = 15 - max length = 75
 		}
 
@@ -181,8 +186,8 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 
 				for (int wallNumber = 0; wallNumber < borderWallAmount; wallNumber++)
 				{
-						if (x == borderWall[0] && y >= borderLength[wallNumber]) { temp->setWall(); }
-						if (x == borderWall[1] && y <= borderLength[wallNumber]) { temp->setWall(); }
+					if (x == borderWall[0] && y >= borderLength[wallNumber]) { temp->setWall(); }
+					if (x == borderWall[1] && y <= borderLength[wallNumber]) { temp->setWall(); }
 				}
 
 				for (int wallNumber = 0; wallNumber < innerWallAmount; wallNumber++)
@@ -194,10 +199,13 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 						temp->setWall();
 					}
 				}
-				
+
 				tiles[x].push_back(temp);
 			}
 		}
+
+		waypoints.push_back(tiles[borderWall[0]][borderLength[0] - 1]); // Get tile at top of border wall
+		waypoints.push_back(tiles[borderWall[1]][size - borderLength[1] + 1]); // Get tile at bottom of border wall
 
 		return tiles;
 	}
@@ -260,7 +268,7 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 				else
 				{
 					isEven = false;
-				} 
+				}
 
 				for (int wallNumber = 0; wallNumber < borderWallAmount; wallNumber++)
 				{
@@ -286,24 +294,4 @@ std::vector<std::vector<Tile*>> LevelLoader::LoadLevel(int levelNumber)
 
 		return tiles;
 	}
-}
-
-void LevelLoader::addWaypoints()
-{
-	//auto p_path = Pathfinder::Find(this, m_enemySpawn.front(), m_playerPath.front());
-	//auto path = *p_path;
-	//delete p_path;
-	//int tiles = 0;
-	//for (auto& tile : path)
-	//{
-	//	tiles++;
-	//	if (tiles % 20 == 1)
-	//	{
-	//		waypoints.push_back(tile); // every 10 tiles is a waypoint
-	//	}
-	//	if (tiles > path.size() - (path.size() / 10)) //ignore last 10 percent of tiles
-	//	{
-	//		break;
-	//	}
-	//}
 }

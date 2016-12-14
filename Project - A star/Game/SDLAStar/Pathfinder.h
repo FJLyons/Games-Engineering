@@ -10,7 +10,7 @@
 
 #include "Tile.h"
 
-//class Enemy;
+#include "Enemy.h"
 
 using namespace std;
 
@@ -56,7 +56,7 @@ public:
 		return abs(abs(current->xPos - end->xPos) + abs(current->yPos - end->yPos));
 	}
 
-	tileList Find(Tile* startTile, Tile* endTile, std::vector<std::vector<Tile*>>& tiles)
+	tileList Find(Enemy* enemy, Tile* startTile, Tile* endTile, std::vector<std::vector<Tile*>>& tiles)
 	{
 		tileList openList;
 		tileList finalPath;
@@ -72,6 +72,8 @@ public:
 		startTileInfo->FunctionCost = startTileInfo->GraphCost + startTileInfo->HeuristicCost;
 
 		openList.push_back(startTile);
+
+		enemy->needsToSearch = false;
 
 		// If open list empty there is no solution
 		while (!openList.empty())
@@ -92,7 +94,7 @@ public:
 				while (currentTileInfo->parentTile != nullptr)
 				{
 					finalPath.push_back(currentTile);
-//					enemy->currentPath.push_back(currentTile);
+					enemy->currentPath.push_back(currentTile);
 
 					currentTile->setPath();
 					currentTile = currentTileInfo->parentTile;
