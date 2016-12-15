@@ -5,6 +5,8 @@ SceneManager *SceneManager::_instance = 0;
 
 SceneManager::SceneManager()
 {
+	Size2D winSize(2000, 2000);
+	renderer.init(winSize, "A Star Threading", camera);
 }
 
 SceneManager::~SceneManager()
@@ -27,12 +29,12 @@ void SceneManager::init()
 {
 	currentLevel = 0;
 	maxlevels = 2;
-	goToLevel(0);
+	goToLevel(0, renderer, camera);
 }
 
-void SceneManager::goToLevel(int levelNumber)
+void SceneManager::goToLevel(int levelNumber, Renderer rend, Camera2D* cam)
 {
-	if (!game[levelNumber].init(levelNumber)) 
+	if (!game[levelNumber].init(levelNumber, rend, cam))
 	{
 		cout << "Failed to init game" << '\n';
 	}
@@ -47,7 +49,7 @@ void SceneManager::goToLevel(int levelNumber)
 	{
 		currentLevel++;
 	}
-	goToLevel(currentLevel);
+	goToLevel(currentLevel, rend, cam);
 }
 
 void SceneManager::destroy()

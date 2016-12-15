@@ -32,6 +32,7 @@ class Game:public EventListener
 
 	vector<Tile*> waypoints;
 	vector<Enemy*> enemies;
+	vector<Enemy*> enemiesToDelete;
 	Player * player;
 
 	Camera2D * camera;
@@ -46,11 +47,13 @@ class Game:public EventListener
 	bool progress; // Move to next level
 	bool quit; // quit app
 
+	bool threaded = false;
+
 public:
 	Game();
 	~Game();
 
-	bool init(int levelNumber);
+	bool init(int levelNumber, Renderer rend, Camera2D* cam);
 	void update();
 	void render();
 	void loop();

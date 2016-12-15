@@ -30,17 +30,20 @@ void Enemy::Update(float dt)
 		}
 	}
 
-	if (tileMap.size() == 100)
+	else if (tileMap.size() == 100)
 	{
-		if (elapsedTime >= 0.01f)
+		if (elapsedTime >= 0.1f)
 		{
 			moveEnemy(dt);
 		}
 	}
 
-	else
+	else if (tileMap.size() == 1000)
 	{
-		moveEnemy(dt);
+		if (elapsedTime >= 0.00001f)
+		{
+			moveEnemy(dt);
+		}
 	}
 }
 

@@ -10,8 +10,8 @@ using namespace std;
 #include "SceneManager.h"
 #include "LevelLoader.h"
 
-const int SCREEN_FPS = 1000;
-const int SCREEN_TICKS_PER_FRAME = 100;
+const int SCREEN_FPS = 1000000;
+const int SCREEN_TICKS_PER_FRAME = 1 / SCREEN_FPS;
 
 Game::Game()
 {
@@ -23,13 +23,15 @@ Game::~Game()
 {
 }
 
-bool Game::init(int levelNumber) {	
+bool Game::init(int levelNumber, Renderer rend, Camera2D* cam) {	
 	// Set Window Size
-	Size2D winSize(2000,2000);
+	Size2D winSize(2000, 2000);
+	renderer = rend;
+	camera = cam;
 
 	// Objects
 	tiles = LevelLoader::instance()->LoadLevel(levelNumber);
-	waypoints = LevelLoader::instance()->waypoints;
+	//waypoints = LevelLoader::instance()->waypoints;
 
 	// Set Up Each Level
 	if (levelNumber == 0)
@@ -38,7 +40,7 @@ bool Game::init(int levelNumber) {
 		levelSize = 30;
 
 		endTile = tiles[rand() % 10 + 1][rand() % 10 + 10];
-		waypoints.push_back(endTile);
+		//waypoints.push_back(endTile);
 		player = new Player(endTile, tiles);
 		for (int i = 0; i < 5; i++)
 		{
@@ -52,7 +54,7 @@ bool Game::init(int levelNumber) {
 		levelSize = 100;
 
 		endTile = tiles[rand() % 33 + 1][rand() % 33 + 33];
-		waypoints.push_back(endTile);
+		//waypoints.push_back(endTile);
 		player = new Player(endTile, tiles);
 		for (int i = 0; i < 50; i++)
 		{
@@ -66,7 +68,7 @@ bool Game::init(int levelNumber) {
 		levelSize = 1000;
 
 		endTile = tiles[rand() % 333 + 1][rand() % 333 + 333];
-		waypoints.push_back(endTile);
+		//waypoints.push_back(endTile);
 		player = new Player(endTile, tiles);
 		for (int i = 0; i < 500; i++)
 		{
@@ -83,20 +85,26 @@ bool Game::init(int levelNumber) {
 	renderer.setNewCamera(camera);
 
 	// A Star
-	//Threading::getInstance()->spawnWorkers();
 	for (int i = 0; i < enemies.size(); i++)
 	{
-		if (enemies[i]->needsToSearch == true)
+		if (threaded == true)
 		{
-			Threading::getInstance()->addTask(std::bind(		// Bind function for threading
-				&Pathfinder::Find,								// Function to bind
-				pathfinder,										// Class object for function
-				enemies[i],										// Send in enemy to get path
-				enemies[i]->currentTile,						// Start position for A star
-				player->currentTile,							// End position for A star
-				tiles											// tile map
-			));
-			enemies[i]->currentWayPoint++;
+			if (enemies[i]->needsToSearch == true)
+			{
+				Threading::getInstance()->addTask(std::bind(		// Bind function for threading
+					&Pathfinder::Find,								// Function to bind
+					pathfinder,										// Class object for function
+					enemies[i],										// Send in enemy to get path
+					enemies[i]->currentTile,						// Start position for A star
+					player->currentTile,							// End position for A star
+					tiles											// tile map
+				));
+				enemies[i]->currentWayPoint++;
+			}
+		}
+		else
+		{
+			pathfinder->Find(enemies[i], enemies[i]->currentTile, player->currentTile, tiles);
 		}
 	}
 
@@ -119,7 +127,6 @@ bool Game::init(int levelNumber) {
 	progress = false;
 
 	//creates renderer, which looks after drawing and the window
-	renderer.init(winSize, "A Star Threading", camera);
 
 	return true;
 }
@@ -136,40 +143,51 @@ void Game::update()
 	{
 		enemies[i]->Update(deltaTime);
 
-		if (enemies[i]->needsToSearch == true && enemies[i]->hasFinished == true && progress == false)
-		{
-			//if (enemies[i]->currentWayPoint < waypoints.size() - 1)
-			//{
-			//	Threading::getInstance()->addTask(std::bind(			// Bind function for threading
-			//		&Pathfinder::Find,									// Function to bind
-			//		pathfinder,											// Class object for function
-			//		enemies[i],											// Send in enemy to get path
-			//		enemies[i]->currentTile,							// Start position for A star
-			//		waypoints[enemies[i]->currentWayPoint], 								// End position for A star
-			//		tiles												// tile map
-			//	));
-			//	enemies[i]->currentWayPoint++;
 
-			//	enemies[i]->hasFinished = false;
-			//}
+			if (enemies[i]->needsToSearch == true && enemies[i]->hasFinished == true && progress == false)
+			{
+				if (threaded == true)
+				{
+					//if (enemies[i]->currentWayPoint < waypoints.size() - 1)
+					//{
+					//	Threading::getInstance()->addTask(std::bind(			// Bind function for threading
+					//		&Pathfinder::Find,									// Function to bind
+					//		pathfinder,											// Class object for function
+					//		enemies[i],											// Send in enemy to get path
+					//		enemies[i]->currentTile,							// Start position for A star
+					//		waypoints[enemies[i]->currentWayPoint], 			// End position for A star
+					//		tiles												// tile map
+					//	));
+					//	enemies[i]->currentWayPoint++;
 
-			//else
-			//{
-				Threading::getInstance()->addTask(std::bind(			// Bind function for threading
-					&Pathfinder::Find,									// Function to bind
-					pathfinder,											// Class object for function
-					enemies[i],											// Send in enemy to get path
-					enemies[i]->currentTile,							// Start position for A star
-					player->currentTile, 								// End position for A star
-					tiles												// tile map
-				));
+					//	enemies[i]->hasFinished = false;
+					//}
 
-				enemies[i]->hasFinished = false;
-			//}
-		}
+					Threading::getInstance()->addTask(std::bind(			// Bind function for threading
+						&Pathfinder::Find,									// Function to bind
+						pathfinder,											// Class object for function
+						enemies[i],											// Send in enemy to get path
+						enemies[i]->currentTile,							// Start position for A star
+						player->currentTile, 								// End position for A star
+						tiles												// tile map
+					));
+
+					enemies[i]->hasFinished = false;
+				}
+
+				else
+				{
+					pathfinder->Find(enemies[i], enemies[i]->currentTile, player->currentTile, tiles);
+
+					enemies[i]->hasFinished = false;
+				}
+
+			}
 
 		if (enemies[i]->currentTile == player->currentTile)
 		{
+			enemiesToDelete.push_back(enemies[i]);
+
 			enemies.erase(enemies.begin() + i);
 		}
 	}
@@ -298,12 +316,14 @@ void Game::destroy()
 {
 	//delete player; // Breaks if called while Astar is running
 
-	for (std::vector< Enemy* >::iterator it = enemies.begin(); it != enemies.end(); ++it)
+	for (std::vector< Enemy* >::iterator it = enemiesToDelete.begin(); it != enemiesToDelete.end(); ++it)
 	{
 		delete *it;
 	}
 	enemies.clear();
 	enemies.shrink_to_fit();
+	enemiesToDelete.clear();
+	enemiesToDelete.shrink_to_fit();
 
 	for (std::vector< std::vector<Tile*> >::iterator it = tiles.begin(); it != tiles.end(); ++it)
 	{
@@ -319,5 +339,5 @@ void Game::destroy()
 	waypoints.clear();
 	waypoints.shrink_to_fit();
 
-	renderer.destroy();
+	//renderer.destroy();
 }
