@@ -47,7 +47,7 @@ class Game:public EventListener
 	bool progress; // Move to next level
 	bool quit; // quit app
 
-	bool threaded = false;
+	bool threaded = true;
 
 public:
 	Game();
