@@ -68,6 +68,5 @@ void Threading::spawnWorkers()
 
 void Threading::clearTasks()
 {
-	processThreadPool.clear();
 	paths.clear();
 }
