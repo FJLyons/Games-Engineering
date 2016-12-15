@@ -68,7 +68,7 @@ bool Game::init(int levelNumber) {
 		endTile = tiles[rand() % 333 + 1][rand() % 333 + 333];
 		waypoints.push_back(endTile);
 		player = new Player(endTile, tiles);
-		for (int i = 0; i < 20; i++)
+		for (int i = 0; i < 500; i++)
 		{
 			startTile = tiles[rand() % 333 + 666][rand() % 333 + 333];
 			enemies.push_back(new Enemy(startTile, tiles));
