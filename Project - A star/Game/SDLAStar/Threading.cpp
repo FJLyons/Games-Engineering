@@ -37,10 +37,10 @@ std::function<void()> Threading::findPaths()
 
 	if (paths.empty())
 	{
-		return std::function<void*()>();
+		return std::function<void()>();
 	}
 
-	auto path = paths.front();
+	auto path = paths.front();;
 	paths.pop_front();
 
 	SDL_UnlockMutex(mutexLock);//
