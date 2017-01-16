@@ -7,10 +7,10 @@ class Character
 public:
 	Character() { }
 	void Print() { cout << "Printing Character" << endl; }
-	virtual void Draw() = 0;
+	virtual void Draw() {};
 };
 
-class HandleToCharacter : public Character
+class HandleToCharacter
 {
 public:
 	HandleToCharacter() : character(new Character()) {  }
