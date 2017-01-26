@@ -52,10 +52,24 @@ public:
 class SpaceCommand : public Command
 {
 public:
-	SpaceCommand(std::function<void()> function) : Command(function) {}
-	virtual void execute()
+	SpaceCommand(std::function<void()> function, EventListener::Type type) : Command(function, type) {}
+	
+	virtual void executePress()
 	{
-		m_function();
+		for (int i = 0; m_type == EventListener::Type::Press && i < m_functions.size(); i++)
+			m_functions[i]();
+	}
+
+	virtual void executeRelease()
+	{
+		for (int i = 0; m_type == EventListener::Type::Release && i < m_functions.size(); i++)
+			m_functions[i]();
+	}
+
+	virtual void executeHold()
+	{
+		for (int i = 0; m_type == EventListener::Type::Hold && i < m_functions.size(); i++)
+			m_functions[i]();
 	}
 };
 

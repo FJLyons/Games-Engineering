@@ -4,7 +4,7 @@
 
 Player::Player()
 {
-	rect = Rect(300, 300, 100, 100);
+	rect = Rect(600, 600, 20, 20);
 }
 
 Player::~Player()

@@ -32,23 +32,23 @@ bool Game::init(Renderer rend) {
 	player = new Player();
 	
 	// Events
-	inputManager->AddListener(EventListener::Event::SPACE, this);//////////////////////////////////////////////////////////////
-	inputManager->Key_SPACE = new SpaceCommand(std::bind(&Game::progressTest, this));//////////////////////////////////////////
+	EventListener::Event testEvent = EventListener::Event::ESCAPE;
+	Command* test = new SpaceCommand(std::bind(&Game::progressTest, this), EventListener::Type::Press);//////////////////////////////////////////
 
+	Command* w = new SpaceCommand(std::bind(&Player::movePlayerUp, player), EventListener::Type::Hold);
+	Command* a = new SpaceCommand(std::bind(&Player::movePlayerLeft, player), EventListener::Type::Hold);
+	Command* s = new SpaceCommand(std::bind(&Player::movePlayerDown, player), EventListener::Type::Hold);
+	Command* d = new SpaceCommand(std::bind(&Player::movePlayerRight, player), EventListener::Type::Hold);
 
-	inputManager->AddListener(EventListener::Event::w, this);
-	inputManager->Key_w = new SpaceCommand(std::bind(&Player::movePlayerUp, player));
-	inputManager->AddListener(EventListener::Event::a, this);
-	inputManager->Key_a = new SpaceCommand(std::bind(&Player::movePlayerLeft, player));
-	inputManager->AddListener(EventListener::Event::s, this);
-	inputManager->Key_s = new SpaceCommand(std::bind(&Player::movePlayerDown, player));
-	inputManager->AddListener(EventListener::Event::d, this);
-	inputManager->Key_d = new SpaceCommand(std::bind(&Player::movePlayerRight, player));
+	inputManager->AddKey(testEvent, test, this);
+	inputManager->AddKey(EventListener::Event::BUTTON_DPAD_UP, w, this);
+	inputManager->AddKey(EventListener::Event::BUTTON_DPAD_LEFT, a, this);
+	inputManager->AddKey(EventListener::Event::BUTTON_DPAD_DOWN, s, this);
+	inputManager->AddKey(EventListener::Event::BUTTON_DPAD_RIGHT, d, this);
 
 	// Bools
 	quit = false;
 	progress = false;
-
 
 	return true;
 }
@@ -101,27 +101,11 @@ void Game::loop()
 	}
 }
 
+
 // Event manager
 void Game::onEvent(EventListener::Event evt)
 {
-	switch (evt)
-	{
-	case (EventListener::Event::SPACE):////////////////////////////////////////////////////////////////////////////////////////
-		inputManager->Key_SPACE->execute();////////////////////////////////////////////////////////////////////////////////////
-		break;
-	case (EventListener::Event::w):
-		inputManager->Key_w->execute();
-		break;
-	case (EventListener::Event::a):
-		inputManager->Key_a->execute();
-		break;
-	case (EventListener::Event::s):
-		inputManager->Key_s->execute();
-		break;
-	case (EventListener::Event::d):
-		inputManager->Key_d->execute();
-		break;
-	}
+
 }
 
 // Close app
