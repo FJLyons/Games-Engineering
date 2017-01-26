@@ -143,8 +143,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Abstract Factory.cpp" />
-    <ClCompile Include="Bridge.cpp" />
-    <ClCompile Include="Proxy.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
