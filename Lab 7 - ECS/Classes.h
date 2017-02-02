@@ -2,7 +2,8 @@
 #include <vector>
 
 enum Type {
-	Health
+	Health,
+	Position
 };
 
 class Component
@@ -20,6 +21,8 @@ public:
 	Entity() {}
 	~Entity() {}
 
+	std::map<Type, std::vector<Component*>*> GetComponents() { return components; };
+
 	void AddComponent(Type t, Component* c) 
 	{ 
 		if (components.find(t) == components.end())
@@ -30,8 +33,7 @@ public:
 		components[t]->push_back(c); 
 	}
 
-	//void RemoveComponent(Component* c) { components.erase(std::find(components.begin(), components.end(), c)); }
-	std::map<Type, std::vector<Component*>*> GetComponents() { return components; };
+	void RemoveComponent(Component* c) { components[Type::Health]->clear(); }
 
 private:
 	std::map<Type, std::vector<Component*>*> components;
@@ -62,15 +64,52 @@ public:
 	void AddEntity(Entity e) { entities.push_back(e); }
 	void Update()
 	{
-		std::cout << "HealthSystem Update" << std::endl;
-		for (int i = 0; i < entities.size() && entities[i].GetComponents().size() > 0; i++)
+		std::cout << "\nHealthSystem Update\t";
+		for (int i = 0; i < entities.size(); i++)
 		{
-			if (entities[i].GetComponents().find(Health) != entities[i].GetComponents().end())
+			for (auto const &entityComponent : *entities[i].GetComponents()[Health])
 			{
-				for (auto const &entityComponent : *entities[i].GetComponents()[Health])
-				{
-					entityComponent->Update();
-				}
+				std::cout << "Health =\t";
+				static_cast<HealthComponenet*>(entityComponent)->SetHealth(static_cast<HealthComponenet*>(entityComponent)->GetHealth() + 1);
+				std::cout << static_cast<HealthComponenet*>(entityComponent)->GetHealth() << "\t";
+			}			
+		}
+	}
+};
+
+class PositionComponenet : public Component
+{
+public:
+	PositionComponenet() : position(100) {}
+	~PositionComponenet() {}
+
+	int GetPosition() { return position; }
+	void SetPosition(int p) { position = p; }
+
+private:
+	int position;
+};
+
+class PositionSystem
+{
+	std::vector<Entity> entities;
+
+public:
+	PositionSystem() {}
+	~PositionSystem() {}
+
+
+	void AddEntity(Entity e) { entities.push_back(e); }
+	void Update()
+	{
+		std::cout << "\nPositionSystem Update\t";
+		for (int i = 0; i < entities.size(); i++)
+		{
+			for (auto const &entityComponent : *entities[i].GetComponents()[Position])
+			{
+				std::cout << "Position =\t";
+				static_cast<PositionComponenet*>(entityComponent)->SetPosition(static_cast<PositionComponenet*>(entityComponent)->GetPosition() + 1);
+				std::cout << static_cast<PositionComponenet*>(entityComponent)->GetPosition() << "\t";
 			}
 		}
 	}
